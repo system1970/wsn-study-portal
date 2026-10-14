@@ -25,13 +25,60 @@ function setUnit(unitKey) {
   const metricProtocols = document.getElementById('metric-protocols');
 
   if (isUnit4) {
-    badge.textContent = 'UNIT-IV';
-    badge.className = 'text-[11px] font-mono font-bold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800';
-    subtitle.textContent = 'Network Layer, Routing Protocols & Data Aggregation';
-    icon.innerHTML = '🌐';
-    icon.className = 'w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-bold text-xl';
-    metricSlides.innerHTML = '⚡ <strong>192</strong> Slides';
-    metricProtocols.innerHTML = '📡 <strong>20+</strong> Protocols';
+    container.innerHTML = `
+      <div class="border-b-2 border-amber-500 pb-3 text-center">
+        <h1 class="text-2xl font-black text-amber-400 print:text-amber-800">ECPE39: WSN UNIT-IV NETWORK LAYER & ROUTING CRAM SHEET (PAGES 1–103)</h1>
+        <p class="text-xs text-slate-400 font-mono mt-1">Exhaustive Master Exam Blueprint • Lectures 1, 2, and 3.1</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-[11px] leading-relaxed">
+        <div class="border border-slate-700 p-3 rounded-xl space-y-1.5 bg-slate-900/60">
+          <h3 class="font-bold text-amber-400 uppercase text-xs">⚡ 1. Routing Metrics & Formulas (pp. 1–28)</h3>
+          <div>• <strong>Minimum Hop:</strong> Smallest relay count; reduces latency/resources, but may overload bottlenecks.</div>
+          <div>• <strong>Singh et al. (1998) 5 Energy Metrics:</strong><br>
+            1. <em>Min Energy per Packet:</em> ∑(E_tx + E_rx). Fig 3: Path A-D-G (cost 5) vs B-G (cost 6).<br>
+            2. <em>Max Time to Partition:</em> Identifies cut nodes via <strong>Max-Flow Min-Cut Theorem</strong> (Node D protects F, I, J).<br>
+            3. <em>Min Variance in Power:</em> Balances energy dissipation equally across all nodes.<br>
+            4. <em>Max (Avg) Capacity:</em> Favors highest total battery (Path C-E-G cap 8); avg prevents long paths.<br>
+            5. <em>Max Min Capacity:</em> max(min(E_residual)) protects weakest node (Path B-G min cap 2).
+          </div>
+          <div>• <strong>QoS Metrics:</strong> ETT = ETX * (S / B) | ETX = 1 / (d_f * d_r) (Draves 2004, De Couto 2003).</div>
+        </div>
+
+        <div class="border border-slate-700 p-3 rounded-xl space-y-1.5 bg-slate-900/60">
+          <h3 class="font-bold text-amber-400 uppercase text-xs">⚡ 2. Flooding & Data-Centric Routing (pp. 29–65)</h3>
+          <div>• <strong>Flooding Deficiencies (Heinzelman 1999):</strong> Implosion (duplicate packets), Overlap (sensors in region Y send duplicate data), Resource Blindness (ignores battery). Control: TTL & SeqNum.</div>
+          <div>• <strong>Gossiping (Hedetniemi 1988):</strong> Forwards with prob p, discards with 1-p. Solves implosion partially; fails overlap/resource blindness.</div>
+          <div>• <strong>SPIN Family (Kulik 2002):</strong> Metadata negotiation (x < X), Resource Manager. Handshake: ADV → REQ → DATA.<br>
+            - <em>SPIN-PP:</em> Point-to-point 3-way handshake; 1-hop awareness.<br>
+            - <em>SPIN-EC:</em> Participates only if battery > safety threshold.<br>
+            - <em>SPIN-BC:</em> Broadcast channel. Random backoff timer; overhearing identical REQ suppresses own REQ! DATA sent once.<br>
+            - <em>SPIN-RL:</em> Reliable version; re-requests on timeout; rate-limits DATA.
+          </div>
+          <div>• <strong>Directed Diffusion (Intanagonwiwat 2000):</strong> Attribute-value naming. 3 Phases: Interest propagation (gradients setup) → Exploratory data delivery (low rate) → Path reinforcement (sink reinforces best neighbor with high rate). Push (SPIN) vs Pull (DD).</div>
+          <div>• <strong>Rumor Routing (Braginsky 2002):</strong> Long-lived Agent with TTL walks network updating Event Tables (<Event, Dist, NextHop>). Query wanders randomly until hitting event path.</div>
+          <div>• <strong>GBR (Schurgers 2001):</strong> Height = min hops to BS. Gradient = Height_node - Height_neighbor. Forwards on largest gradient. Balancing: Stochastic, Energy-Based, Stream-Based.</div>
+        </div>
+
+        <div class="border border-slate-700 p-3 rounded-xl space-y-1.5 bg-slate-900/60">
+          <h3 class="font-bold text-amber-400 uppercase text-xs">⚡ 3. Proactive & Reactive Routing (pp. 66–87)</h3>
+          <div>• <strong>DSDV (Perkins 1994):</strong> Distributed Bellman-Ford. Next hop k = min_j {d_ij^x}. Loop-free via Destination Sequence Numbers. Updates: Full Dump (entire table) vs Incremental Packet (changed routes). Replacement: higher seq num, or equal seq num with smaller hops. Moving node: Node C moves to H/G, D updates next hop E, distance 3.</div>
+          <div>• <strong>OLSR (Clausen 2001):</strong> Link-state. Periodic HELLO senses 1-hop & 2-hop symmetric neighbors. Multipoint Relays (MPRs): minimal subset covering all 2-hop neighbors. ONLY MPRs forward topology control (TC) packets, cutting broadcast storms.</div>
+          <div>• <strong>AODV (Perkins 1999):</strong> Reactive distance-vector. Source broadcasts RREQ (<Source, BroadcastID, Dest, DestSeqNum, HopCount>). Intermediate nodes record reverse pointers; reply with unicast RREP only if route SeqNum >= DestSeqNum in RREQ. Forward pointers set by RREP. Link breaks trigger RERR.</div>
+          <div>• <strong>DSR (Johnson 1994):</strong> Source routing. Complete path stored in packet header; relays need no routing tables. Route Cache stores learned paths. RREQ accumulates intermediate hops; destination replies with full path. Supports asymmetric links and promiscuous route caching.</div>
+        </div>
+
+        <div class="border border-slate-700 p-3 rounded-xl space-y-1.5 bg-slate-900/60">
+          <h3 class="font-bold text-amber-400 uppercase text-xs">⚡ 4. Hierarchical Routing Protocols (pp. 88–103)</h3>
+          <div>• <strong>Clustering Principle:</strong> Solves scalability/collisions. Member nodes transmit to Cluster Head (CH). CH fuses data and relays to sink (single-hop vs multi-hop CH-to-sink).</div>
+          <div>• <strong>Landmark Routing (Tsuchiya 1988):</strong> Landmark of radius n known to all nodes within n hops. Global landmark radius > network diameter. Hierarchical address LM2.LM1.LM0 routes from coarse to fine resolution.</div>
+          <div>• <strong>LANMAR (Gerla 2000):</strong> Landmark + Fisheye State Routing (FSR). Landmark is CH of logical subnet. Detailed updates confined to local fisheye scope; distant packets routed to subnet landmark.</div>
+          <div>• <strong>LEACH (Heinzelman 2000):</strong> Distributed clustering with randomized CH rotation. TDMA intra-cluster, CDMA inter-cluster. Assumes all CHs reach base station directly.</div>
+          <div>• <strong>PEGASIS (Lindsey 2002):</strong> Linear greedy chain. Nodes transmit only to closest chain neighbor; data fuses along chain; 1 rotating leader per round transmits to base station. 100-300% energy gain over LEACH; high latency.</div>
+          <div>• <strong>Safari Architecture (Du 2008):</strong> Self-organizing hierarchy of Drums (landmarks) and Cells (Level 0 node, Level 1 fundamental cells, supercells). Periodic drum beacons guide hierarchy. Hybrid routing: reactive DSR within cells, proactive reverse-beacon routing between cells. Extreme scalability.</div>
+        </div>
+      </div>
+    `;
   } else {
     badge.textContent = 'UNIT-III';
     badge.className = 'text-[11px] font-mono font-bold text-sky-400 bg-sky-950/80 px-2 py-0.5 rounded border border-sky-800';
@@ -80,133 +127,139 @@ function switchTab(tabId) {
 // -------------------------------------------------------------------------
 const UNIT4_LECTURES = {
   lec1: {
-    title: "Unit 4 • Lecture 1: Network Layer Overview & Routing Metrics",
+    title: "Unit 4 • Lecture 1: Network Layer Overview & Routing Metrics (pp. 1–28)",
     sections: [
       {
-        heading: "1. WSN Network Layer Role & Multi-Hop Relay Model",
+        heading: "1. Role of Network Layer & Multi-Hop Relay Model (Slides 1–7)",
         items: [
-          "Direct (single-hop) communication is only feasible in tiny networks where all nodes are within radio range of the gateway.",
-          "Large sensor networks covering wide areas require indirect (multi-hop) communication where intermediate nodes serve as relays (forwarding nodes).",
-          "Routing Definition: The process of establishing paths from a source to a sink (gateway) across one or more relays.",
-          "Deterministic Deployment: Allows predetermined, static routing tables.",
-          "Randomized Deployment: Creates non-uniform, unpredictable topologies requiring nodes to self-organize (discover positions, identify neighbors, find paths).",
-          "Constraints: Lightweight processing, minimal memory, bandwidth efficiency, and adaptation to frequent node failures. No global IP addressing."
+          "<strong>Single-Hop vs Multi-Hop Communication:</strong> Direct (single-hop) transmission is only feasible in small networks where sensor nodes and the gateway/sink are in close proximity. Real-world WSN applications deploy large numbers of nodes covering extensive geographic terrains, necessitating indirect (multi-hop) communication where intermediate nodes act as forwarding relays.",
+          "<strong>Dual Functionality of Sensor Nodes:</strong> Sensor nodes must not only generate and disseminate their own sensed information, but also serve as intermediate relays forwarding packets originating from other sensors toward the gateway.",
+          "<strong>Routing Definition:</strong> The fundamental network-layer process of discovering, establishing, and maintaining paths from a source sensor node to a destination sink across one or more intermediate relay nodes.",
+          "<strong>Deterministic Deployment:</strong> Nodes are placed at predetermined, known physical coordinates (e.g., factory automation, structural health monitoring). Allows pre-calculated, static routing tables with minimal dynamic control overhead.",
+          "<strong>Randomized Deployment:</strong> Nodes are scattered randomly (e.g., aerial airdrop in disaster zones or battlefields), yielding non-uniform, unpredictable topologies. Sensor nodes must autonomously self-organize: discover their relative locations, identify neighbors, and dynamically establish routing paths.",
+          "<strong>Severe Hardware & Operational Constraints:</strong> WSN routing protocols must operate under stringent constraints: ultra-low CPU processing power, minimal RAM/storage, low radio bandwidth, limited onboard battery capacity, and high susceptibility to node failures (battery depletion, environmental damage). Global addressing schemes (like IP/CIDR) are non-feasible due to high header overhead and node mobility."
         ]
       },
       {
-        heading: "2. Routing Classifications (Al-Karaki & Kamal 2004)",
+        heading: "2. Al-Karaki & Kamal (2004) 3-Way Routing Classification (Slides 8–15)",
         items: [
-          "Network Structure / Organization: Flat-based (identical roles for all nodes), Hierarchical-based (different roles: cluster heads, forwarders, members), Location-based (uses physical coordinates).",
-          "Route Discovery Process: Reactive / On-demand (routes discovered only when needed, incurs discovery delay), Proactive / Table-driven (routes maintained in advance, avoids delay but high overhead and stale routes), Hybrid.",
-          "Protocol Operation: Negotiation-based (meta-data exchange to eliminate redundancy, e.g. SPIN), Multipath-based (fault tolerance and throughput), Query-based (receiver-initiated by sink), QoS-based (satisfies latency, energy, packet loss bounds), Coherent vs Non-Coherent (level of local processing before aggregation)."
+          "<strong>Dimension 1 — Network Structure / Organization:</strong><br>• <em>Flat-based Routing:</em> All sensor nodes play identical, uniform roles and collaborate equally to forward data (e.g., SPIN, Directed Diffusion). Simple, but faces scalability bottlenecks in dense networks.<br>• <em>Hierarchical-based Routing:</em> Nodes perform differentiated roles. The network is partitioned into clusters; member nodes transmit only to their designated Cluster Head (CH). CHs perform data aggregation and relay consolidated packets to the sink.<br>• <em>Location-based Routing:</em> Routing decisions are made using spatial/geographic coordinates (via GPS or localized triangulation) rather than network addresses (e.g., GPSR, GEAR, GAF).",
+          "<strong>Dimension 2 — Route Discovery Process:</strong><br>• <em>Reactive (On-Demand) Routing:</em> Routes are discovered strictly when a source has data to send and lacks a route. Saves table storage and control overhead, but introduces initial route discovery latency.<br>• <em>Proactive (Table-Driven) Routing:</em> Nodes continuously calculate and maintain routes to all destinations in advance. Zero discovery latency upon packet generation, but incurs high control message overhead and risks maintaining stale routes.<br>• <em>Hybrid Routing:</em> Combines proactive mechanisms within local neighborhoods and reactive discovery for distant nodes (e.g., Safari, ZRP).",
+          "<strong>Dimension 3 — Protocol Operation Paradigms:</strong><br>• <em>Negotiation-based:</em> Nodes exchange compact metadata descriptors before transmitting raw data payloads to avoid transmitting redundant information (e.g., SPIN).<br>• <em>Multipath-based:</em> Establishes multiple concurrent paths between source and destination to provide fault tolerance, load balancing, and increased aggregate throughput.<br>• <em>Query-based:</em> Receiver-initiated dissemination. The sink broadcasts queries/interests, and only sensors matching the query respond with data (e.g., Directed Diffusion).<br>• <em>QoS-based:</em> Protocol explicitly balances performance metrics (bounded latency, minimum throughput, low packet loss, energy consumption) to meet application QoS constraints.<br>• <em>Coherent vs Non-Coherent In-Network Processing:</em> Coherent protocols perform minimal local processing (e.g., simple filtering/relaying) before passing raw data to centralized aggregators; Non-coherent protocols perform heavy local preprocessing (e.g., feature extraction, local state estimation) before transmitting condensed summaries.",
+          "<strong>Dissemination Models:</strong> Unicast (exactly one receiver), Multicast (a defined group of nodes), Broadcast (all nodes in the network), and Data-Centric (addressed by data attributes rather than node IDs)."
         ]
       },
       {
-        heading: "3. Routing Metrics in WSNs",
+        heading: "3. Application Data Reporting Models (Slides 16–17)",
         items: [
-          "Application Models: Time-driven (periodic sensor reporting) vs Event-driven (reporting triggered when event of interest occurs).",
-          "Minimum Hop (Shortest Hop): Finds path with smallest number of relay nodes; minimizes end-to-end delay and relay resource usage.",
-          "Energy Metrics (Singh et al. 1998):",
-          "  • Minimum energy consumed per packet: Sum of Tx and Rx energy along the path (e.g., path A-D-G with cost 5 vs B-G with cost 6).",
-          "  • Maximum time to network partition: Protect critical bridge nodes whose failure disconnects sub-networks (found via Max-Flow Min-Cut Theorem).",
-          "  • Minimum variance in node power levels: Balances energy consumption across all nodes equally to extend total network lifetime.",
-          "  • Maximum (average) energy capacity: Favors routes with highest total or average battery reserve (e.g. path C-E-G with total capacity 8).",
-          "  • Maximum minimum energy capacity: Favors path where the weakest node has highest residual battery (max(min(E))), protecting low-capacity nodes (e.g. path B-G with min capacity 2)."
+          "<strong>Time-Driven Reporting:</strong> Sensor nodes periodically sample and transmit environmental data at regular, fixed time intervals (e.g., ambient temperature or soil moisture monitoring). Predictable, continuous traffic patterns well-suited for proactive routing.",
+          "<strong>Event-Driven Reporting:</strong> Sensor nodes remain in low-power idle/sleep modes and transmit data only when a specific physical threshold or event of interest occurs (e.g., forest fire detection, intrusion alarms, structural cracks). Highly bursty traffic with strict latency bounds, well-suited for reactive and data-centric routing."
+        ]
+      },
+      {
+        heading: "4. Commonly Used Routing Metrics & Link Quality (Slides 18, 26–28)",
+        items: [
+          "<strong>Minimum Hop (Shortest Hop) Metric (Slide 18):</strong> Finds the path from source to destination requiring the smallest total count of relay nodes. Rationale: Minimizes end-to-end delay and reduces overall network resource consumption because the smallest possible number of forwarding nodes participate. Weakness: Tends to overload bottleneck nodes and ignores residual energy.",
+          "<strong>Quality-of-Service (QoS) Metrics (Slide 26):</strong><br>• <em>Latency:</em> End-to-end communication delay from source generation to sink reception (crucial for real-time target tracking).<br>• <em>Throughput:</em> Actual volume of valid sensor data successfully delivered per unit time.<br>• <em>Jitter:</em> Statistical variance in end-to-end latency across consecutive packets.<br>• <em>Packet Loss:</em> Proportion of dropped packets due to radio channel noise, collision, or buffer overflow.",
+          "<strong>Expected Transmission Time (ETT) (Draves et al. 2004, Slide 27):</strong> Represents the expected time required to successfully transmit a packet over a wireless link at the MAC layer: <code>ETT = ETX * (S / B)</code>, where <em>S</em> is average packet size (bytes) and <em>B</em> is raw link bandwidth (bytes/sec).",
+          "<strong>Expected Transmission Count (ETX) (De Couto et al. 2003, Slide 27):</strong> Measures the expected number of MAC-layer transmissions (including retransmissions) needed to successfully deliver a packet over a link: <code>ETX = 1 / (d_f * d_r)</code>, where <em>d_f</em> is the forward packet reception rate and <em>d_r</em> is the reverse acknowledgment reception rate.",
+          "<strong>Robustness Metric (Slide 28):</strong> Protocols actively estimate link quality (signal-to-noise ratio, PRR) to each neighbor and select paths with the highest cumulative or average link quality, avoiding lossy, unstable links."
         ],
-        formula: "Max-Flow Min-Cut Theorem | max(min(E_residual)) | ETT = ETX * (S / B)"
+        formula: "ETT = ETX * (S / B)  |  ETX = 1 / (d_f * d_r)"
       },
       {
-        heading: "4. QoS Metrics & Link Quality",
+        heading: "5. Energy Routing Metrics & Graph Analysis (Singh et al. 1998, Slides 19–25)",
         items: [
-          "QoS parameters: End-to-end latency, throughput, jitter (latency variation), and packet loss.",
-          "Expected Transmission Time (ETT) (Draves et al. 2004): Time to successfully transmit a packet at MAC layer: ETT = ETX * (S / B).",
-          "Expected Transmission Count (ETX) (De Couto et al. 2003): Number of MAC transmissions required to deliver a packet over a link (ETX = 1 / (d_f * d_r)).",
-          "Robustness: Protocol estimates link quality to each neighbor, selecting paths that maximize packet reception probability."
-        ]
+          "<strong>Significance of Energy Efficiency:</strong> Energy is the most critical constraint in WSNs. There is no single universal energy metric; Singh et al. (1998) formulated five distinct interpretations:",
+          "<strong>a) Minimum Energy Consumed per Packet (Slide 21):</strong> Minimizes the sum of energy consumed for transmission (E_tx) and reception (E_rx) along the entire route. In Figure 3: Path A–D–G has a total link cost of 5 (costs: A→D=2, D→G=3), whereas the minimum-hop path B–G has a total link cost of 6. Thus, path A–D–G is chosen despite having more hops!",
+          "<strong>b) Maximum Time to Network Partition (Slides 22–23):</strong> Prevents the failure of critical 'bridge' or 'cut' nodes whose depletion splits the network into disconnected subnetworks. Minimal disconnecting sets of nodes are identified mathematically using the <em>Max-Flow Min-Cut Theorem</em>. In Figure 3: Node D is a critical bridge node; if node D's battery becomes depleted, nodes F, I, and J become completely disconnected and unreachable from the rest of the network! The routing protocol balances traffic to deflect packets away from D.",
+          "<strong>c) Minimum Variance in Node Power Levels (Slide 24):</strong> Distributes traffic so that energy consumption is equalized across all nodes in the network, preventing localized hot spots and maximizing the functional lifetime of the entire network.",
+          "<strong>d) Maximum (Average) Energy Capacity (Slides 24–25):</strong> Focuses on current remaining battery reserves rather than link propagation costs. Favors routes with the highest total remaining energy capacity. In Figure 3: Path C–E–G is selected because its total residual capacity is 8 (Node C=3, E=3, G=2). <em>Limitation:</em> It can favor unnecessarily long routes just to accumulate capacity. The variant <strong>Maximum Average Energy Capacity</strong> fixes this by dividing total capacity by hop count.",
+          "<strong>e) Maximum Minimum Energy Capacity (Slide 25):</strong> Maximizes the minimum residual energy capacity along the route: <code>max(min(E_residual))</code>. Focuses on protecting the weakest node from premature exhaustion. In Figure 3: Path B–G is selected because its bottleneck minimum capacity is 2 (Node B=2, G=2), which is higher than the bottleneck of alternative paths."
+        ],
+        formula: "max(min(E_residual))  |  Max-Flow Min-Cut Theorem  |  Cost(A-D-G) = 5 vs Cost(B-G) = 6"
       }
     ]
   },
   lec2: {
-    title: "Unit 4 • Lecture 2: Flooding, Gossiping & Data-Centric Routing",
+    title: "Unit 4 • Lecture 2: Flooding, Gossiping & Data-Centric Routing (pp. 29–65)",
     sections: [
       {
-        heading: "1. Flooding vs Gossiping",
+        heading: "1. Flooding & Gossiping Mechanisms & Deficiencies (Slides 31–38)",
         items: [
-          "Classic Flooding: Sender broadcasts packet to immediate neighbors, who rebroadcast until all nodes receive or maximum hop limit (TTL) is reached.",
-          "Flooding Deficiencies (Heinzelman et al. 1999):",
-          "  1. Implosion: Duplicated packets received by the same node from different neighbors (e.g. A sends to B & C, both forward to D).",
-          "  2. Overlap: Colocated sensors monitoring overlapping geographic area Y send identical data to neighbor C.",
-          "  3. Resource Blindness: Ignores node battery levels; exhausts weak nodes.",
-          "Gossiping (Hedetniemi et al. 1988): Probabilistic forwarding where node forwards to random neighbor with probability p, and discards with 1-p. Solves implosion partially, but does not solve overlap or resource blindness; low p causes delivery failures."
+          "<strong>Classic Flooding Mechanism (Slide 31):</strong> A sender node broadcasts a packet to all immediate neighbors. Each receiving neighbor rebroadcasts to all its neighbors, continuing recursively until all network nodes receive the packet or a maximum hop limit (TTL) is exhausted. Advantage: Maximum simplicity and guaranteed delivery in lossless, connected graphs. Disadvantage: Generates enormous broadcast traffic and packet collisions.",
+          "<strong>Flooding Controls (Slide 32):</strong> Maximum-hop counts (TTL) prevent packets from looping indefinitely; Sequence Numbers in packet headers identify unique packets, allowing nodes to discard duplicates.",
+          "<strong>Three Critical Deficiencies of Flooding (Heinzelman et al. 1999, Slides 33–36):</strong><br>• <strong>1. Implosion (Slide 34, Fig 1 Left):</strong> A node receives duplicate copies of the exact same packet from multiple neighbors. Example: Node A broadcasts packet P1 to neighbors B and C. Both B and C rebroadcast P1 to node D. Node D receives duplicate P1, wasting radio transceiver energy.<br>• <strong>2. Overlap (Slide 35, Fig 1 Right):</strong> Colocated sensors monitor overlapping geographic sensing regions (Region Y). Sensors A and B both record identical physical phenomena in Region Y and both independently forward their readings to common neighbor C, wasting channel bandwidth and energy. Overlap is harder to solve because it requires mapping physical sensor readings to spatial topology.<br>• <strong>3. Resource Blindness (Slide 36):</strong> Flooding is completely incognizant of node battery constraints; it blindly routes packets through energy-depleted nodes, rapidly causing premature node death and network partition.",
+          "<strong>Gossiping Protocol (Hedetniemi et al. 1988, Slides 37–38):</strong> A randomized, probabilistic routing technique. Instead of broadcasting to all neighbors, a node forwards the packet to a randomly selected neighbor with probability <em>p</em>, and discards the packet with probability <em>1 - p</em>. Alleviates the implosion problem partially by reducing message volume. <em>Limitations:</em> Does NOT solve overlap or resource blindness; if <em>p</em> is too low, packet delivery fails; if <em>p = 1</em>, it degenerates into classic flooding."
         ]
       },
       {
-        heading: "2. SPIN (Sensor Protocols for Information via Negotiation)",
+        heading: "2. Data-Centric Routing Concept & Philosophy (Slide 39)",
         items: [
-          "Kulik et al. (2002). Negotiation-based, data-centric, time-driven routing.",
-          "Nodes negotiate with neighbors using meta-data before transmitting payload, solving implosion and overlap.",
-          "Meta-data requirement: Meta-data size x must be strictly smaller than raw sensor data X (x < X).",
-          "Each node has an internal Resource Manager tracking energy consumption, preventing resource blindness.",
-          "SPIN Variants:",
-          "  • SPIN-PP: Point-to-point 3-way handshake: ADV (advertises meta-data) → REQ (requests data if not possessed) → DATA (transmits payload).",
-          "  • SPIN-EC: Energy-constrained version; nodes participate in handshake only if energy > safety threshold.",
-          "  • SPIN-BC: Broadcast version for one-to-many channels. Nodes set a random timer before sending REQ; if an identical REQ is overheard, timer is cancelled and duplicate REQ is suppressed! Advertiser broadcasts DATA only once.",
-          "  • SPIN-RL: Reliable version of SPIN-BC. Re-requests data if DATA is not received within timeout; limits DATA broadcast frequency."
+          "<strong>Paradigm Shift:</strong> Address-centric routing routes data between specific node IP addresses. In contrast, <em>Data-Centric Routing</em> focuses on the data itself: data retrieval and dissemination described by content attributes or query criteria, rather than node identities.",
+          "<strong>Collaborative Flat Networks:</strong> Perfectly aligned with flat-based WSNs where all nodes play identical roles and collaborate to perform sensing, routing, and in-network processing without global addressing."
         ]
       },
       {
-        heading: "3. Directed Diffusion (Intanagonwiwat et al. 2000)",
+        heading: "3. SPIN Protocol Family (Sensor Protocols for Information via Negotiation) (Slides 40–50)",
         items: [
-          "Data-centric data dissemination named by attribute-value pairs (e.g. type=vehicle, interval=20ms, duration=10s, rect=[-100,-100,200,200]).",
-          "Three-Phase Operation:",
-          "  1. Interest Propagation: Sink periodically broadcasts an Interest message; nodes diffuse it and set up Gradients (reply links pointing to the neighbor from which interest was received).",
-          "  2. Initial Data Delivery: Sensor nodes matching interest generate exploratory data and send along all gradients at low rate.",
-          "  3. Reinforcement: Sink reinforces one preferred neighbor (e.g. lowest delay) by sending a high-rate interest; neighbor reinforces its best upstream neighbor. Non-optimal paths are negatively reinforced.",
-          "Difference from SPIN: Directed diffusion queries are issued on-demand by sinks, whereas SPIN data is advertised by sources."
-        ]
-      },
-      {
-        heading: "4. Rumor Routing & Gradient-Based Routing (GBR)",
-        items: [
-          "Rumor Routing (Braginsky & Estrin 2002): Strikes a compromise between event flooding and query flooding for moderate query-to-event ratios.",
-          "Witnessed event is added to node's Event Table; node generates a long-lived Agent packet with a TTL with a certain probability.",
-          "Agent travels through network updating event tables with shortest paths. Queries travel randomly until intersecting an event path, then follow the table.",
-          "GBR (Schurgers & Srivastava 2001): Nodes compute Height = minimum hops to base station. Gradient = Height_node - Height_neighbor. Forwards along link with largest gradient.",
-          "GBR Traffic Balancing: Stochastic (random among equal gradients), Energy-Based (low battery node increases its height to deflect traffic), Stream-Based (avoids nodes already carrying streams)."
+          "<strong>Origin & Category (Kulik et al. 2002, Slide 40):</strong> Negotiation-based, data-centric, time-driven routing protocol family. Solves flooding deficiencies using two core techniques:<br>1. <em>Meta-Data Negotiation:</em> Nodes exchange concise meta-data descriptors before transmitting raw data payloads, eliminating implosion and overlap.<br>2. <em>Resource Manager:</em> Each node has an internal resource manager tracking battery levels, eliminating resource blindness by adapting routing participation.",
+          "<strong>Meta-Data Axiom (Slide 41):</strong> If <em>x</em> is the meta-data size and <em>X</em> is the raw sensor data size, the size of <em>x</em> must be strictly smaller than <em>X</em> (<code>x < X</code>). Identical sensor data must yield identical meta-data. Meta-data is application-specific (e.g., camera sensor uses tuple <code>(x, y, φ)</code> where x,y are coordinates and φ is camera orientation).",
+          "<strong>SPIN-PP (Point-to-Point, Slides 42–45, Fig 2):</strong> Designed for lossless point-to-point links. Operates via a 3-way handshake:<br>• Step 1 — <code>ADV</code> (Advertisement): Source broadcasts meta-data describing newly collected sensor data.<br>• Step 2 — <code>REQ</code> (Request): Neighbor checks its local memory. If it does not possess the data, it replies with REQ. If it already has the data, it ignores the ADV.<br>• Step 3 — <code>DATA</code>: Source transmits the full payload only to requesting neighbors.<br>• Nodes only need 1-hop neighbor knowledge. Neighbors can aggregate received data and advertise new aggregates.<br>• Loss handling: Compensates for lost ADV by periodic readvertisements; compensates for lost REQ/DATA via timeouts or explicit request lists.",
+          "<strong>SPIN-EC (Energy-Constrained, Slide 46):</strong> Adds an energy heuristic to SPIN-PP. Nodes participate in the 3-way handshake only if their current energy reserve is above a low-energy safety threshold and they have sufficient battery to complete all stages (REQ transmission + DATA reception) without falling below the threshold.",
+          "<strong>SPIN-BC (Broadcast Channel, Slides 47–49):</strong> Designed for wireless broadcast media (one-to-many communication). When an ADV is broadcast, multiple neighbors may need the data. To prevent collision:<br>• A node wishing to receive data sets a <em>random backoff timer</em> chosen uniformly from a predetermined interval.<br>• When the timer expires, it broadcasts REQ (naming the advertiser in the header).<br>• <strong>REQ Suppression:</strong> If a node overhears an identical REQ from another neighbor while its timer is running, it cancels its timer and suppresses its own REQ!<br>• The advertiser broadcasts <code>DATA</code> to the broadcast address <strong>only once</strong>, satisfying all listening neighbors and ignoring duplicate requests!",
+          "<strong>SPIN-RL (Reliable Version, Slides 49–50):</strong> Reliable extension of SPIN-BC for lossy channels and asymmetric links. Keeps track of overheard REQ messages; if corresponding DATA does not arrive within a timeout, re-requests data by broadcasting REQ directed to a randomly selected node among those that previously advertised the data. Enforces rate-limiting: once a node sends a DATA message, it waits a predetermined time before responding to any other requests for the same data."
         ],
-        formula: "Gradient = Height_node - Height_neighbor"
+        formula: "x < X (Meta-data size < Raw data size)  |  3-Way Handshake: ADV → REQ → DATA"
+      },
+      {
+        heading: "4. Directed Diffusion (Intanagonwiwat, Govindan, Estrin 2000, Slides 51–56)",
+        items: [
+          "<strong>Application-Aware Attribute-Value Naming (Slides 51–53):</strong> Data and sensing tasks are named using attribute-value pairs without globally valid node IDs. Example task specification:<br><code>type = vehicle // detect vehicle location</code><br><code>interval = 20 ms // send data every 20 ms</code><br><code>duration = 10 s // perform task for 10 s</code><br><code>rect = [-100,-100,200,200] // from sensors within rectangle</code>",
+          "<strong>Three-Phase Protocol Operation (Slide 54, Fig 2):</strong><br>• <strong>Phase 1: Interest Propagation:</strong> Sink periodically broadcasts an Interest message describing the task. Intermediate nodes diffuse (rebroadcast) the interest and set up <strong>Gradients</strong> (reply links/pointers directed toward the neighbor from which interest was received).<br>• <strong>Phase 2: Initial Exploratory Data Delivery:</strong> Matching sensor sources produce sensor readings and dispatch exploratory data along all gradients at a low data rate.<br>• <strong>Phase 3: Path Reinforcement:</strong> Upon receiving exploratory data, the sink reinforces one preferred neighbor (e.g., shortest latency, best link quality) by sending an updated interest with a higher data rate (interval = 20ms). This neighbor reinforces its best upstream neighbor until the high-rate path reaches the source. Non-optimal paths are negatively reinforced.",
+          "<strong>Critical Differences from SPIN (Slide 56):</strong> In Directed Diffusion, queries (interests) are issued on-demand by sinks (query pull). In SPIN, data is advertised by sources (data push). All communication is neighbor-to-neighbor, enabling in-network aggregation and caching without global IP. Limitation: Query-driven nature is less suited for continuous periodic streaming."
+        ]
+      },
+      {
+        heading: "5. Rumor Routing & Gradient-Based Routing (GBR) (Slides 57–65)",
+        items: [
+          "<strong>Rumor Routing (Braginsky & Estrin 2002, Slides 57–62):</strong> Strikes an optimal compromise between Event Flooding (wasteful when events are common) and Query Flooding (wasteful when queries are common). Ideal for moderate query-to-event ratios.<br>• <em>Event Tables & Agents:</em> Each node maintains a Neighbor List and an <strong>Event Table</strong> (columns: Event, Distance, Next Hop). When a node detects an event, it records it with distance 0 and generates a long-lived <strong>Agent</strong> packet with a TTL with a certain probability.<br>• <em>Agent Random Walk:</em> The Agent travels through the network, learning routes and updating other nodes' event tables with shorter paths to observed events (Slide 59, Fig 3: Agent from node E reaches node A via G; A updates table for Event E1 with next hop G and shorter distance).<br>• <em>Query Delivery:</em> Sink query follows event table pointers if known; otherwise wanders randomly (recording visited nodes to avoid loops) until intersecting an event path. If timeout expires, falls back to flooding.<br>• Rumor routing accepts non-optimal paths to achieve massive energy savings; latency is not guaranteed.",
+          "<strong>Gradient-Based Routing (GBR) (Schurgers & Srivastava 2001, Slides 63–65):</strong> Variant of Directed Diffusion. Computes the <strong>Height</strong> of each node = minimum hop count to the Base Station. Computes <strong>Gradient</strong> = <code>Height_node - Height_neighbor</code>.<br>• <em>Forwarding Rule:</em> Nodes forward packets along the link with the <strong>largest positive gradient</strong>.<br>• <em>Data Aggregation:</em> When multiple routes pass through a node, their data is fused.<br>• <strong>Three Traffic Balancing Schemes (Slide 65):</strong><br>1. <em>Stochastic Scheme:</em> When multiple links have equal maximum gradient, a node selects one at random to balance traffic.<br>2. <em>Energy-Based Scheme:</em> When a node's battery drops below a threshold, it artificially inflates its height, reducing its gradient and deflecting traffic away to conserve battery.<br>3. <em>Stream-Based Scheme:</em> A node carrying an active data stream increases its height to prevent other streams from routing through it."
+        ],
+        formula: "Gradient = Height_node - Height_neighbor  |  Event Table: <Event, Distance, NextHop>"
       }
     ]
   },
   lec3_1: {
-    title: "Unit 4 • Lecture 3.1: Proactive, Reactive & Hierarchical Routing",
+    title: "Unit 4 • Lecture 3.1: Proactive, Reactive & Hierarchical Routing (pp. 66–103)",
     sections: [
       {
-        heading: "1. Proactive (Table-Driven) Routing",
+        heading: "1. Proactive (Table-Driven) Routing: DSDV & OLSR (Slides 66–74)",
         items: [
-          "DSDV (Destination-Sequenced Distance Vector): Modified Bellman-Ford algorithm. Every node maintains destination, next-hop, distance, and Destination Sequence Number (assigned by destination to prevent loops).",
-          "DSDV updates: Full Dump (entire table, infrequent) vs Incremental Packet (changed routes only). Higher sequence number replaces route; if equal, smaller distance replaces route.",
-          "OLSR (Optimized Link State Routing) (Clausen et al. 2001): Link-state protocol using Multipoint Relays (MPRs).",
-          "Nodes send periodic HELLO packets to discover 1-hop and 2-hop symmetric neighbors. Each node selects an MPR Selector Set (subset of 1-hop neighbors covering all 2-hop neighbors).",
-          "Key advantage: ONLY MPRs forward control messages, drastically reducing broadcast traffic compared to classic flooding."
+          "<strong>Proactive Routing Philosophy (Slide 66):</strong> Routes are established and continuously maintained to all destinations in advance. Advantage: Zero route discovery latency upon packet generation. Disadvantages: Heavy control message overhead; high memory consumption for tables; risk of stale routes causing delivery errors.",
+          "<strong>DSDV (Destination-Sequenced Distance Vector) (Perkins & Bhagwat 1994, Slides 66–70):</strong> Modified Distributed Bellman-Ford algorithm.<br>• Node <em>i</em> maintains distances {d_ij^x} for each destination <em>x</em> via neighbor <em>j</em>. Next hop <em>k</em> is chosen where d_ik^x = min_j {d_ij^x}.<br>• Table entries: Destination, Next Hop, Distance, and <strong>Destination Sequence Number</strong> (assigned exclusively by the destination node to eliminate routing loops).<br>• <em>Packet Types:</em> <strong>Full Dump</strong> (entire routing table, transmitted infrequently) vs <strong>Incremental Packet</strong> (changed routes only, transmitted frequently; much smaller, reducing control overhead).<br>• <em>Route Replacement Rules:</em> (1) Higher sequence number always replaces older sequence number; (2) If sequence numbers are identical, the route with smaller distance (fewer hops) replaces the existing route.<br>• <em>Moving Node Scenario (Slide 69–70, Fig 3):</em> Node C moves from near B to near nodes H and G. Updates from D's neighbors inform D that the route to C via B is invalid, and a new route via node E exists. Node D updates its routing table: Destination C, Next Hop E, Distance 3.",
+          "<strong>OLSR (Optimized Link State Routing) (Clausen et al. 2001, Slides 71–74):</strong> Standardized proactive link-state protocol.<br>• <em>Neighbor Sensing:</em> Periodic <code>HELLO</code> broadcasts discover 1-hop and 2-hop symmetric (bidirectional) and asymmetric neighbors.<br>• <strong>Multipoint Relays (MPRs):</strong> Each node selects an <em>MPR Selector Set</em>: a minimal subset of 1-hop symmetric neighbors that collectively covers all of its 2-hop neighbors.<br>• <em>Core Innovation:</em> <strong>ONLY nodes selected as MPRs are allowed to forward topology control (TC) messages!</strong> (Slide 72, Fig 4). Non-MPR nodes process TC packets but never retransmit them, eliminating broadcast storms.<br>• Nodes announce reachability to their MPRs, creating an optimized partial topology map sufficient for shortest-path Dijkstra calculations."
         ]
       },
       {
-        heading: "2. Reactive (On-Demand) Routing",
+        heading: "2. Reactive (On-Demand) Routing: AODV & DSR (Slides 75–87)",
         items: [
-          "AODV (Ad Hoc On-Demand Distance Vector) (Perkins & Royer 1999): Broadcasts Route Request (RREQ). Intermediate nodes set up reverse pointers. If destination or intermediate node has fresh route, sends unicast Route Reply (RREP) along reverse path, setting up forward pointers. Broken links trigger Route Error (RERR).",
-          "DSR (Dynamic Source Routing) (Johnson 1994): Based on Source Routing. Route Request accumulates addresses of all visited nodes in packet header. Destination unicasts Route Reply with full path. Nodes maintain a Route Cache. Packets carry complete route in header; supports asymmetric links."
+          "<strong>Reactive Routing Philosophy (Slide 77):</strong> Routes are discovered on-demand, strictly when a source needs to send data and has no active route established.",
+          "<strong>AODV (Ad Hoc On-Demand Distance Vector) (Perkins & Royer 1999, Slides 77–84):</strong><br>• <em>Route Discovery:</em> Source broadcasts a Route Request (<code>RREQ</code>) packet: <code><Source_Addr, Broadcast_ID, Dest_Addr, Dest_Seq_Num, Hop_Count></code>. Broadcast ID increments with each new RREQ; the pair <code><Source_Addr, Broadcast_ID></code> uniquely identifies RREQ to discard duplicates.<br>• <em>Reverse Path Setup:</em> Rebroadcasting nodes record the address of the neighbor from which RREQ came, creating a reverse path to the source.<br>• <em>Reply Rule:</em> An intermediate node replies with a unicast Route Reply (<code>RREP</code>) only if its route sequence number is <strong>greater than or equal to</strong> the Dest_Seq_Num in RREQ. Otherwise, it increments hop count and rebroadcasts RREQ.<br>• <em>Forward Path Setup:</em> As unicast RREP returns along the reverse path, nodes set up forward pointers and record the latest destination sequence number.<br>• <em>RREP Filter (Slide 83):</em> An intermediate node forwards RREP upstream only if: (1) first copy received, (2) higher destination sequence number, or (3) identical sequence number with smaller hop count.<br>• <em>Route Maintenance:</em> Periodic HELLO beacons or MAC feedback detect broken links. The node detecting the break issues a Route Error (<code>RERR</code>) upstream to notify the source to reinitiate discovery. Route table entries expire via timers.",
+          "<strong>DSR (Dynamic Source Routing) (David B. Johnson 1994, Slides 84–87):</strong><br>• <em>Source Routing Principle:</em> The originating sender places the complete sequence of intermediate node addresses directly into the packet header! Relay nodes do not need routing tables; they simply forward to the next hop in the header.<br>• <em>Route Cache:</em> Nodes maintain route caches continuously updated by learning routes from forwarded packets.<br>• <em>Route Discovery:</em> Source checks cache; if no route, broadcasts RREQ (<code><Source, Dest, Request_ID></code>). Intermediate nodes append their address to the header. If a node detects its own address in header, it discards packet (loop prevention). Duplicate RREQs dropped via cache.<br>• <em>Route Reply:</em> Destination receives RREQ containing the complete path. In symmetric networks, destination unicasts RREP along reverse path. In asymmetric networks, destination initiates its own RREQ to source, piggybacking the discovered route.<br>• <em>DSR vs AODV:</em> DSR enables promiscuous route caching (intermediate nodes learn routes by snooping on headers) and naturally supports asymmetric links, but incurs header overhead that grows with hop count."
         ]
       },
       {
-        heading: "3. Hierarchical Routing Protocols",
+        heading: "3. Hierarchical Routing & Clustering Architectures (Slides 88–103)",
         items: [
-          "Landmark Routing (Tsuchiya 1988): A landmark of radius n is a node known to all nodes within n hops. Hierarchical address format: LM2.LM1.LM0. Route transitions from coarse to fine resolution.",
-          "LANMAR (Gerla et al. 2000): Combines Landmark Routing with Fisheye State Routing (FSR). Each landmark is cluster head of a logical subnet.",
-          "LEACH: Clustered routing with distributed CH rotation and local data aggregation.",
-          "PEGASIS (Power-Efficient Gathering in Sensor Information Systems) (Lindsey & Raghavendra 2002): Chain-based protocol. Nodes form a linear chain using a greedy algorithm. Nodes transmit only to nearest chain neighbor; data aggregates along chain; nodes take turns acting as leader to send to base station. High energy efficiency, but high latency.",
-          "Safari Architecture (Du et al. 2008): Self-organizing hierarchy using Drums (landmarks) forming Cells (Level 0 = node, Level 1 = fundamental cells, higher = supercells). Hybrid: reactive DSR within cells, proactive between cells."
-        ]
+          "<strong>Hierarchical Clustering Concept (Slides 88–90):</strong> Groups sensor nodes into clusters to address scalability and efficiency weaknesses of flat routing. Ordinary member nodes transmit only to their designated <strong>Cluster Head (CH)</strong>. CHs aggregate/compress data and forward to the sink.<br>• <em>CH-to-Sink Topologies (Slide 90, Fig 1):</em> Single-hop CH-to-sink (CHs transmit directly to sink) vs Multi-hop CH-to-sink (CHs relay data across intermediate CHs toward sink).<br>• <em>Benefits & Challenges:</em> Drastically reduces radio medium collisions and sensor transmission energy; facilitates data fusion. Challenges include CH election, dynamic cluster formation, and CH energy exhaustion.",
+          "<strong>Landmark Routing (Paul F. Tsuchiya 1988, Slides 91–96):</strong><br>• <em>Definition:</em> A node <em>i</em> for which all nodes within <em>n</em> hops maintain routing information toward <em>i</em> is called a <strong>Landmark of Radius n</strong> (Slide 91/95: Nodes 2–6 know route to node 1; nodes 7–11 do not → node 1 is a landmark of radius 2).<br>• <em>Global Landmarks:</em> Landmarks whose radius exceeds the network diameter (known to all nodes in the network).<br>• <em>Hierarchical Address:</em> Address consists of a sequence of landmark IDs from coarse to fine resolution (e.g., <code>LM2.LM1.LM0</code>).<br>• <em>Routing Walk:</em> Source inspects table, finds LM2, forwards toward LM2. Upon entering LM1 radius, relay node finds both LM2 and LM1; selects LM1 (finer resolution). Inside LM0 radius, delivers directly to LM0.",
+          "<strong>LANMAR (Landmark Ad Hoc Routing) (Gerla et al. 2000, Slides 97–98):</strong> Combines Landmark Routing with Fisheye State Routing (FSR). Each landmark serves as cluster head of a logical subnet. FSR principle: update frequency depends on distance (high within local fisheye scope, zero outside). Packet forwarded directly if destination is within fisheye scope; otherwise routed toward subnet landmark until entering target fisheye scope.",
+          "<strong>LEACH (Heinzelman et al. 2000, Slides 98–99):</strong> Clustered protocol with randomized CH rotation. Assumes CHs can reach base station directly. Intra-cluster uses TDMA schedules (members sleep during non-assigned slots); Inter-cluster uses CDMA codes to avoid co-channel interference.",
+          "<strong>PEGASIS (Lindsey & Raghavendra 2002, Slides 99–100):</strong> Chain-based routing protocol.<br>• Nodes self-organize into a linear chain using a greedy nearest-neighbor algorithm.<br>• Each node transmits only to its closest chain neighbor. Data aggregates along the chain at each hop.<br>• Only <strong>one leader node per round</strong> transmits to the base station. The leader role rotates among all chain nodes.<br>• Achieves up to 100–300% energy savings compared to LEACH, but incurs high latency for distant chain nodes.",
+          "<strong>Safari Architecture (Du et al. 2008, Slides 100–102):</strong> Self-organizing multi-scale hierarchy.<br>• Employs landmarks called <strong>Drums</strong> forming <strong>Cells</strong> (Level 0 = individual node; Level 1 = fundamental cells; Higher levels = supercells).<br>• Drums periodically broadcast scoped beacons providing positional awareness and routing information.<br>• <em>Hybrid Routing:</em> Uses reactive <strong>DSR</strong> within fundamental cells, and proactive routing between cells following the <strong>reverse path of drum beacons</strong> based on hierarchical addresses. Extremely scalable."
+        ],
+        formula: "Landmark Address: LM2.LM1.LM0  |  PEGASIS Linear Chain  |  Safari Drums & Cells"
       }
     ]
   },
@@ -767,18 +820,41 @@ function updateMmspeedCalc() {
 // FLASHCARDS CONTROLLER
 // -------------------------------------------------------------------------
 const UNIT4_FLASHCARDS = [
-  { cat: "Formulas", q: "Expected Transmission Time (ETT) Formula", a: "ETT = ETX * (S / B), where S is average packet size and B is link bandwidth." },
-  { cat: "Formulas", q: "GEAR Estimated Cost Equation", a: "c(N_i, R) = α * d(N_i, R) + (1 - α) * e(N_i), where d is normalized distance to centroid and e is consumed energy." },
-  { cat: "Formulas", q: "MMSPEED Required Speed Formula", a: "ReqSpeed(x) = dist_{s,d}(x) / deadline(x)" },
-  { cat: "Formulas", q: "MMSPEED Total Reaching Probability (TRP)", a: "TRP = 1 - (1 - TRP) * (1 - RP_{i,j}^d)" },
-  { cat: "Key Concepts", q: "Three Deficiencies of Classic Flooding (Heinzelman 1999)", a: "1. Implosion (duplicate packets)\n2. Overlap (sensors in region Y send identical data)\n3. Resource Blindness (ignores battery levels)" },
-  { cat: "Key Concepts", q: "What is the Right-Hand Rule in GPSR?", a: "Traverses edges sequentially counterclockwise from incoming edge; traverses interior clockwise and exterior counterclockwise to navigate around voids on planar graphs." },
-  { cat: "Key Concepts", q: "Difference between SPIN and Directed Diffusion", a: "SPIN is Source-Advertised (push); Directed Diffusion is Sink-Queried (pull) using Interests and Gradients." },
-  { cat: "Protocols", q: "What are Multipoint Relays (MPRs) in OLSR?", a: "A selected minimal subset of 1-hop symmetric neighbors that covers all 2-hop neighbors. Only MPRs forward topology control packets." },
-  { cat: "Protocols", q: "How does PEGASIS aggregate sensor data?", a: "Constructs a linear greedy chain where each node transmits only to its nearest chain neighbor; data aggregates sequentially until the chain leader relays to the base station." },
-  { cat: "Protocols", q: "What is Back-Pressure Rerouting in SPEED?", a: "When downstream nodes are congested (delay > D), packet drops force upstream nodes to detect increased delay and deflect traffic around the hot spot." },
-  { cat: "Data Aggregation", q: "Core Axiom of Data Aggregation in WSNs", a: "Communication consumes considerably more energy than computation! In-network processing saves orders of magnitude in battery power." },
-  { cat: "Data Aggregation", q: "Four Efficacy Metrics of Data Aggregation", a: "1. Accuracy (difference from true physical value)\n2. Completeness (% of readings included)\n3. Latency (delay waiting for inputs)\n4. Message Overhead" }
+  { cat: "Energy Metrics", q: "Singh et al. (1998) 5 Energy Routing Metrics", a: `1. Minimum energy consumed per packet
+2. Maximum time to network partition (Max-Flow Min-Cut)
+3. Minimum variance in node power levels
+4. Maximum (average) energy capacity
+5. Maximum minimum energy capacity: max(min(E_residual))` },
+  { cat: "Energy Metrics", q: "How is Maximum Time to Network Partition determined?", a: "By identifying critical bridge/cut nodes whose depletion disconnects subgraphs, calculated using the Max-Flow Min-Cut Theorem (e.g. Node D protects nodes F, I, J)." },
+  { cat: "Formulas", q: "Expected Transmission Time (ETT) Formula", a: "ETT = ETX * (S / B), where S is average packet size and B is link bandwidth (Draves et al. 2004)." },
+  { cat: "Formulas", q: "Expected Transmission Count (ETX) Formula", a: "ETX = 1 / (d_f * d_r), where d_f is forward reception rate and d_r is reverse acknowledgment rate (De Couto et al. 2003)." },
+  { cat: "Formulas", q: "GBR Gradient Formula", a: "Gradient = Height_node - Height_neighbor, where Height is the minimum hop count to the Base Station." },
+  { cat: "Flooding & Gossiping", q: "Three Deficiencies of Classic Flooding (Heinzelman 1999)", a: `1. Implosion (duplicate packets received from multiple neighbors)
+2. Overlap (colocated sensors in region Y send identical data)
+3. Resource Blindness (ignores battery levels)` },
+  { cat: "Flooding & Gossiping", q: "Gossiping Probabilistic Forwarding (Hedetniemi 1988)", a: "Forwards packet to random neighbor with probability p, discards with 1 - p. Reduces implosion, but fails to solve overlap or resource blindness; low p risks delivery failure." },
+  { cat: "SPIN Family", q: "Two Fundamental Pillars of SPIN (Kulik et al. 2002)", a: `1. Meta-data negotiation (size x < X, identical data = identical metadata) to eliminate implosion and overlap.
+2. Internal Resource Manager to eliminate resource blindness.` },
+  { cat: "SPIN Family", q: "SPIN-PP 3-Way Handshake", a: "ADV (advertises metadata) → REQ (requests data if not possessed) → DATA (transmits raw payload). Single-hop neighbor awareness only." },
+  { cat: "SPIN Family", q: "SPIN-BC Request Suppression Mechanism", a: "Receiving node starts a random backoff timer. If an identical REQ is overheard before expiry, timer is cancelled and REQ is suppressed! Sender broadcasts DATA only once." },
+  { cat: "SPIN Family", q: "SPIN-EC & SPIN-RL Distinct Features", a: `SPIN-EC: participates in handshake only if battery > safety threshold.
+SPIN-RL: reliable broadcast for lossy links; re-requests data on timeout and rate-limits DATA transmissions.` },
+  { cat: "Directed Diffusion", q: "Three Phases of Directed Diffusion (Intanagonwiwat 2000)", a: `1. Interest Propagation (sink broadcasts interest, sets up reverse gradients)
+2. Exploratory Data Delivery (matching sources send low-rate data along all gradients)
+3. Path Reinforcement (sink sends high-rate interest to reinforce best path).` },
+  { cat: "Directed Diffusion", q: "SPIN vs Directed Diffusion Key Contrast", a: "SPIN is Source-Advertised (data push); Directed Diffusion is Sink-Queried (query pull). Directed diffusion natively enables in-network aggregation along gradients." },
+  { cat: "Rumor Routing", q: "Rumor Routing Agent & Query Traversal (Braginsky 2002)", a: "Observed event generates a long-lived Agent packet with a TTL that walks the network updating Event Tables. Sinks send queries that wander until intersecting an event path." },
+  { cat: "GBR", q: "Three Traffic Balancing Schemes in GBR", a: `1. Stochastic: random choice among equal maximum gradients.
+2. Energy-Based: low battery nodes artificially inflate height to deflect traffic.
+3. Stream-Based: nodes carrying active streams increase height.` },
+  { cat: "Proactive Routing", q: "DSDV Loop Prevention & Packet Types (Perkins 1994)", a: "Uses Destination Sequence Numbers assigned by destination. Exchanges Full Dumps (entire table, infrequent) and Incremental Packets (changed routes only, low overhead)." },
+  { cat: "Proactive Routing", q: "OLSR Multipoint Relays (MPRs) (Clausen 2001)", a: "Minimal subset of 1-hop symmetric neighbors covering all 2-hop neighbors. ONLY MPRs are permitted to forward topology control packets, eliminating broadcast storms." },
+  { cat: "Reactive Routing", q: "AODV Route Discovery & Reply Rule (Perkins & Royer 1999)", a: "Source broadcasts RREQ. Intermediate node replies with unicast RREP only if its route sequence number is >= DestSeqNum in RREQ. RREP establishes forward pointers." },
+  { cat: "Reactive Routing", q: "DSR Source Routing & Route Cache (Johnson 1994)", a: "Originating source includes the complete sequence of intermediate hops in the packet header. Intermediate nodes cache learned paths and need no routing tables." },
+  { cat: "Hierarchical Routing", q: "Landmark Routing Address Structure (Tsuchiya 1988)", a: "Address consists of a sequence of landmark IDs: LM2.LM1.LM0. Routing walks from coarse global landmarks to fine localized landmarks." },
+  { cat: "Hierarchical Routing", q: "LANMAR & Fisheye State Routing (Gerla 2000)", a: "Each landmark is cluster head of a logical subnet. Detailed routing updates restricted to local fisheye scope; distant packets routed toward subnet landmark." },
+  { cat: "Hierarchical Routing", q: "PEGASIS Linear Greedy Chain Gathering (Lindsey 2002)", a: "Nodes form a linear chain; each communicates only with closest chain neighbor. Data aggregates along chain; exactly one rotating leader per round transmits to base station." },
+  { cat: "Hierarchical Routing", q: "Safari Architecture Drums and Cells (Du 2008)", a: "Self-organizing hierarchy using Drums (landmarks) and Cells (Level 0 node, Level 1 fundamental cells, supercells). Hybrid: reactive DSR within cells, proactive reverse-beacon between cells." }
 ];
 
 let fcIndex = 0, fcFlipped = false, fcMastered = [];
@@ -846,18 +922,26 @@ function toggleMasterFlashcard() {
 // UNIVERSITY Q&A BANK CONTROLLER
 // -------------------------------------------------------------------------
 const UNIT4_QA_2MARKS = [
-  { q: "Define Routing in Wireless Sensor Networks.", a: "Routing is the process of establishing paths from a source sensor node to a sink (gateway) across one or more intermediate relay nodes." },
-  { q: "What is Implosion in classic flooding?", a: "Implosion occurs when a node receives duplicate copies of the exact same packet from multiple neighboring nodes, wasting bandwidth and energy." },
-  { q: "What is the Overlap problem in sensor networks?", a: "Colocated sensors monitor overlapping physical areas (region Y) and both forward identical sensed data to the same receiver, causing redundant transmission." },
-  { q: "How does SPIN overcome resource blindness?", a: "Each SPIN node incorporates an internal Resource Manager that monitors current battery levels and curtails participation in routing handshakes when energy drops below a threshold." },
-  { q: "State the three phases of Directed Diffusion.", a: "1. Interest Propagation (gradients established); 2. Initial Exploratory Data Delivery; 3. Path Reinforcement (high-rate path selection)." },
-  { q: "How does GBR balance traffic across the network?", a: "Using three schemes: Stochastic (random choice among equal gradients), Energy-based (low battery nodes raise height), and Stream-based (avoids loaded nodes)." },
-  { q: "What are Multipoint Relays (MPRs) in OLSR?", a: "A minimal set of 1-hop symmetric neighbors selected to cover all 2-hop symmetric neighbors. Only MPRs retransmit topology control messages." },
-  { q: "How does GPSR recover from a dead-end void?", a: "It switches to Perimeter Mode, using the Right-Hand Rule to navigate planar graphs (RNG / Gabriel Graph) until reaching a node closer to the destination." },
-  { q: "State the estimated cost equation in GEAR.", a: "c(N_i, R) = α * d(N_i, R) + (1 - α) * e(N_i), where d is normalized distance to centroid, e is consumed energy, and α is a tunable weight." },
-  { q: "Define Expected Transmission Count (ETX).", a: "ETX is the expected number of MAC transmissions required to successfully deliver a packet over a wireless link (ETX = 1 / (d_f * d_r))." },
-  { q: "Why is communication more energy-consuming than computation in WSNs?", a: "Transmitting a single bit over radio consumes roughly the same energy as executing thousands of CPU instructions, making in-network data aggregation essential." },
-  { q: "Differentiate between lossy and lossless in-network data aggregation.", a: "Lossy aggregation combines and compresses readings to reduce packet byte size (e.g. averaging). Lossless aggregation merges distinct packets into a single frame without altering raw data values." }
+  { q: "Define Routing in Wireless Sensor Networks.", a: "Routing is the network-layer process of discovering, establishing, and maintaining paths from a source sensor node to a destination sink (gateway) across one or more intermediate forwarding relay nodes." },
+  { q: "Distinguish between Deterministic and Randomized deployment in WSNs.", a: "Deterministic deployment places nodes at predetermined coordinates, enabling static routing tables. Randomized deployment scatters nodes unpredictably (e.g. airdrop), requiring autonomous self-organization for neighbor discovery and path establishment." },
+  { q: "What is Implosion in classic flooding?", a: "Implosion occurs when a node receives duplicate copies of the exact same packet from multiple neighboring nodes (e.g. A sends to B and C, both forward to D), wasting bandwidth and transceiver energy." },
+  { q: "What is the Overlap problem in sensor networks?", a: "Overlap occurs when colocated sensors monitor overlapping physical areas (region Y) and both forward identical sensor readings to the same neighboring receiver, causing redundant transmissions." },
+  { q: "How does SPIN overcome resource blindness?", a: "Each SPIN node incorporates an internal Resource Manager that continuously monitors remaining battery levels and curtails participation in routing handshakes when energy approaches a low-energy safety threshold." },
+  { q: "State the mandatory requirement for meta-data in SPIN.", a: "If x describes the meta-data for raw sensor data X, the size of x in bytes must be strictly less than the size of X (x < X), and two identical pieces of sensor data must produce identical meta-data." },
+  { q: "How does SPIN-BC eliminate redundant requests in a broadcast channel?", a: "When receiving an ADV, a node sets a random backoff timer. If it overhears an identical REQ from another neighbor before its timer expires, it cancels its timer and suppresses its own REQ. The sender broadcasts DATA only once." },
+  { q: "State the three phases of Directed Diffusion.", a: "1. Interest Propagation (sink broadcasts interests, setting up reverse gradients); 2. Initial Exploratory Data Delivery (low-rate data along all gradients); 3. Path Reinforcement (sink reinforces best neighbor with high data rate)." },
+  { q: "How does Rumor Routing strike a compromise between event and query flooding?", a: "Instead of flooding the entire network with events or queries, nodes generate long-lived Agent packets that walk the network updating event tables. Queries wander randomly until intersecting an event path, drastically reducing overhead for moderate query-to-event ratios." },
+  { q: "State the Gradient formula in Gradient-Based Routing (GBR).", a: "Gradient = Height_node - Height_neighbor, where Height is the minimum hop count from the node to the Base Station. Packets are forwarded along the link with the largest positive gradient." },
+  { q: "List the three traffic balancing schemes used in GBR.", a: "1. Stochastic Scheme (random selection among equal maximum gradients); 2. Energy-Based Scheme (low battery nodes raise height to deflect traffic); 3. Stream-Based Scheme (nodes carrying active streams raise height)." },
+  { q: "How does DSDV prevent routing loops?", a: "DSDV uses Destination Sequence Numbers assigned exclusively by the destination node. A route with a higher sequence number always replaces an older one; if equal, the route with smaller distance is chosen." },
+  { q: "Differentiate between Full Dump and Incremental packets in DSDV.", a: "A Full Dump carries the entire routing table and is transmitted infrequently. An Incremental Packet contains only routes that have changed since the last full dump, reducing control overhead." },
+  { q: "What are Multipoint Relays (MPRs) in OLSR?", a: "MPRs are a selected minimal subset of a node's 1-hop symmetric neighbors that collectively covers all of its 2-hop symmetric neighbors. In OLSR, ONLY MPRs are permitted to retransmit topology control messages." },
+  { q: "What is the reply condition for intermediate nodes in AODV?", a: "An intermediate node replies with an RREP only if the sequence number of its cached route to the destination is greater than or equal to the destination sequence number specified in the RREQ packet." },
+  { q: "How does DSR differ from AODV in terms of packet headers?", a: "DSR uses Source Routing where the originating sender embeds the complete sequence of intermediate hops directly into the packet header, whereas AODV maintains next-hop routing tables at each node." },
+  { q: "Define a Landmark of radius n in Landmark Routing.", a: "A node i for which all other nodes within n hops maintain routing information toward i is defined as a Landmark of radius n. Global landmarks have a radius larger than the network diameter." },
+  { q: "How does PEGASIS achieve near-optimal energy conservation?", a: "Nodes form a linear chain using a greedy algorithm. Each node transmits only to its nearest chain neighbor. Data aggregates along the chain, and exactly one designated leader node per round relays to the base station." },
+  { q: "Describe the hybrid routing architecture in Safari.", a: "Safari uses a hierarchy of Drums and Cells. Within fundamental cells (Level 1), it uses reactive DSR routing. Between cells, it uses proactive routing following the reverse path of drum beacons." },
+  { q: "Define Expected Transmission Count (ETX) and its formula.", a: "ETX is the expected number of MAC transmissions required to deliver a packet over a wireless link: ETX = 1 / (d_f * d_r), where d_f is the forward delivery ratio and d_r is the reverse acknowledgment ratio." }
 ];
 
 let currentQaTab = '2marks';
@@ -880,22 +964,52 @@ function renderQaView() {
   const essaysContainer = document.getElementById('qa-10marks-list');
   if (isUnit4) {
     essaysContainer.innerHTML = `
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
-        <h4 class="text-base font-bold text-amber-400">Essay 1: SPIN vs Directed Diffusion Data-Centric Routing [16 Marks]</h4>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+        <h4 class="text-base font-bold text-amber-400">Essay 1: SPIN Protocols Family vs Directed Diffusion Data-Centric Routing [16 Marks]</h4>
         <div class="text-xs text-slate-300 space-y-2 leading-relaxed">
-          <p><strong>1. SPIN Protocols:</strong> Meta-data negotiation (x < X), Resource manager to prevent resource blindness. 3-way handshake: ADV → REQ → DATA. Variants: SPIN-PP, SPIN-EC, SPIN-BC (random timers), SPIN-RL.</p>
-          <p><strong>2. Directed Diffusion:</strong> Attribute-value naming. Three phases: Interest propagation, Gradient setup, Exploratory data delivery, and empirical Path Reinforcement.</p>
-          <p><strong>3. Critical Differences:</strong> SPIN is source-advertised (push); Directed Diffusion is sink-queried (pull). Directed diffusion supports in-network aggregation directly along gradient paths.</p>
+          <p><strong>1. SPIN Architecture (Kulik et al. 2002):</strong> Negotiation-based, data-centric, time-driven routing. Solves flooding deficiencies via: (a) Meta-data negotiation (size x < X, identical data = identical metadata); (b) Internal Resource Manager tracking battery reserves. Operates via 3-way handshake: ADV → REQ → DATA.</p>
+          <p><strong>2. SPIN Family Variants:</strong><br>
+          • <em>SPIN-PP:</em> Point-to-point lossless links. 1-hop neighbor awareness. Aggregates data at relays.<br>
+          • <em>SPIN-EC:</em> Energy-constrained. Nodes only participate in 3-way handshake if battery > safety threshold.<br>
+          • <em>SPIN-BC:</em> Broadcast channel. Overcomes collision via random backoff timers; overhearing an identical REQ cancels timer and suppresses REQ. DATA sent once to broadcast address.<br>
+          • <em>SPIN-RL:</em> Reliable version for lossy links. Overhears REQ, re-requests on timeout, rate-limits DATA transmissions.</p>
+          <p><strong>3. Directed Diffusion (Intanagonwiwat et al. 2000):</strong> Attribute-value pair naming (e.g. type=vehicle, interval=20ms, duration=10s, rect=[-100,-100,200,200]). Three phases: (1) Interest propagation establishing reverse gradients; (2) Initial exploratory data delivery at low rate; (3) Empirical path reinforcement by sink (high-rate interest to best neighbor).</p>
+          <p><strong>4. In-Depth Comparison:</strong> SPIN is source-advertised (push); Directed Diffusion is sink-queried (pull). Directed Diffusion inherently enables in-network aggregation and caching along gradient paths, whereas SPIN is optimized for time-driven environmental dissemination.</p>
         </div>
       </div>
 
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
-        <h4 class="text-base font-bold text-amber-400">Essay 2: GPSR Location-Based Routing & Perimeter Void Traversal [16 Marks]</h4>
+        <h4 class="text-base font-bold text-amber-400">Essay 2: Proactive (DSDV, OLSR) vs Reactive (AODV, DSR) Routing Protocols [16 Marks]</h4>
         <div class="text-xs text-slate-300 space-y-2 leading-relaxed">
-          <p><strong>1. Greedy Forwarding:</strong> Selects neighbor closest to destination. Requires only 1-hop neighbor locations.</p>
-          <p><strong>2. Void / Dead-End Problem:</strong> When a local node has no neighbor closer to destination than itself.</p>
-          <p><strong>3. Perimeter Mode:</strong> Navigates planar graph (RNG or Gabriel Graph) using the Right-Hand Rule (interior clockwise, exterior counterclockwise) until greedy forwarding can safely resume.</p>
+          <p><strong>1. DSDV (Perkins & Bhagwat 1994):</strong> Modified Distributed Bellman-Ford. Next hop k = min_j {d_ij^x}. Uses Destination Sequence Numbers assigned by destination to eliminate routing loops. Updates via Full Dumps (complete table, infrequent) and Incremental Packets (changed routes only, low overhead). Replacement rule: higher sequence number, or equal sequence number with smaller hop count. Handles node mobility dynamically (Fig 3: node C moves to H/G, D updates next hop to E, distance 3).</p>
+          <p><strong>2. OLSR (Clausen et al. 2001):</strong> Link-state protocol using Multipoint Relays (MPRs). Periodic HELLO sensing detects 1-hop and 2-hop symmetric neighbors. Each node selects a minimal MPR selector set covering all 2-hop neighbors. ONLY MPRs forward topology control (TC) packets, eliminating classic flooding broadcast storms.</p>
+          <p><strong>3. AODV (Perkins & Royer 1999):</strong> Reactive distance-vector. Route discovery: source broadcasts RREQ (<Source, BroadcastID, Dest, DestSeqNum, HopCount>). Intermediate nodes set up reverse pointers; reply with unicast RREP only if route SeqNum ≥ DestSeqNum in RREQ. RREP sets forward pointers. RERR packets notify upstream nodes of link breaks.</p>
+          <p><strong>4. DSR (Johnson 1994):</strong> Source routing. Complete path stored in packet header; relays need no routing tables. Route Cache stores learned paths. RREQ accumulates visited node addresses; destination replies with full recorded route. Supports asymmetric links and promiscuous route learning.</p>
         </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+        <h4 class="text-base font-bold text-amber-400">Essay 3: Hierarchical Routing Protocols in WSNs (Landmark, LANMAR, LEACH, PEGASIS, Safari) [16 Marks]</h4>
+        <div class="text-xs text-slate-300 space-y-2 leading-relaxed">
+          <p><strong>1. Clustering Fundamentals:</strong> Groups nodes to solve scalability, collisions, and energy drain. Cluster Heads (CHs) aggregate member data and forward to sink via single-hop or multi-hop topologies.</p>
+          <p><strong>2. Landmark Routing (Tsuchiya 1988) & LANMAR (Gerla et al. 2000):</strong> Landmark of radius n is known to all nodes within n hops. Hierarchical address format LM2.LM1.LM0 routes from coarse to fine resolution. LANMAR integrates Fisheye State Routing (FSR): frequent updates within local fisheye scope, zero outside; forwards to destination subnet landmark.</p>
+          <p><strong>3. PEGASIS (Lindsey & Raghavendra 2002):</strong> Chain-based protocol. Greedy nearest-neighbor chain. Nodes transmit only to closest neighbor; data fuses along chain; exactly one rotating leader per round transmits to base station. Delivers 100-300% energy gain over LEACH, but incurs sequential latency.</p>
+          <p><strong>4. Safari Architecture (Du et al. 2008):</strong> Self-organizing hierarchy of Drums (landmarks) and Cells (Level 0 node, Level 1 fundamental cells, supercells). Periodic drum beacons provide location and gradients. Hybrid routing: reactive DSR within cells, proactive beacon-reverse routing between cells. Extreme scalability.</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+        <h4 class="text-base font-bold text-amber-400">Essay 4: Energy Routing Metrics & Optimization Formulations (Singh et al. 1998) [16 Marks]</h4>
+        <div class="text-xs text-slate-300 space-y-2 leading-relaxed">
+          <p><strong>1. Energy as Core Constraint:</strong> Energy dominates WSN design because recharging is infeasible. Five distinct metrics formulated by Singh et al. (1998):</p>
+          <p><strong>2. The Five Metrics:</strong><br>
+          • <em>Minimum energy consumed per packet:</em> Minimizes sum of Tx and Rx energy along path. (Fig 3: Path A-D-G cost 5 vs B-G cost 6).<br>
+          • <em>Maximum time to network partition:</em> Protects cut/bridge nodes whose failure isolates subnetworks. Identified via Max-Flow Min-Cut Theorem. (Fig 3: node D protects F, I, J).<br>
+          • <em>Minimum variance in node power levels:</em> Balances energy dissipation equally across all nodes to prevent premature network death.<br>
+          • <em>Maximum (average) energy capacity:</em> Selects path with highest total or average battery reserve. (Fig 3: Path C-E-G capacity 8).<br>
+          • <em>Maximum minimum energy capacity:</em> max(min(E_residual)) protects the weakest bottleneck node from dying. (Fig 3: Path B-G min capacity 2).</p>
+        </div>
+      </div>
       </div>
 
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
@@ -929,14 +1043,21 @@ function setQaTab(tab) {
 // MOCK EXAM QUIZ CONTROLLER
 // -------------------------------------------------------------------------
 const UNIT4_QUIZ = [
-  { q: "What is the primary cause of the Implosion problem in flooding?", opts: ["Packet corruptions in physical layer", "Duplicated packets sent to the same node by multiple neighbors", "Nodes running out of battery", "Carrier sense timeout"], ans: 1, exp: "Implosion occurs when multiple neighbors rebroadcast the exact same packet to a common node." },
-  { q: "What is a mandatory requirement for meta-data in the SPIN protocol?", opts: ["Must be encrypted with AES", "Size of meta-data x must be less than raw data X (x < X)", "Must contain GPS coordinates", "Must exceed 256 bytes"], ans: 1, exp: "Meta-data negotiation is only beneficial if meta-data is significantly smaller than actual payload." },
-  { q: "How are data items named in Directed Diffusion?", opts: ["32-bit IP addresses", "Attribute-value pairs", "MAC addresses", "Random hash keys"], ans: 1, exp: "Directed diffusion uses attribute-value pairs (e.g. type=vehicle, interval=20ms) to name data." },
-  { q: "What is the function of Multipoint Relays (MPRs) in OLSR?", opts: ["Only MPRs are allowed to forward control messages", "They act as base stations", "They perform CDMA decoding", "They calculate clock drift"], ans: 0, exp: "Only MPRs retransmit topology control messages, eliminating broadcast storm duplicates." },
-  { q: "Which protocol incorporates the complete route in the packet header?", opts: ["AODV", "DSR (Dynamic Source Routing)", "DSDV", "LEACH"], ans: 1, exp: "DSR uses Source Routing where the full sequence of intermediate hops is stored in the packet header." },
-  { q: "What rule does GPSR use to route around dead-end voids?", opts: ["Left-hand rule", "Right-hand rule", "Dijkstra rule", "Greedy progress rule"], ans: 1, exp: "Perimeter Mode uses the Right-Hand Rule on planar graphs (interior clockwise, exterior counterclockwise)." },
-  { q: "In SPEED, how is RelaySpeed computed?", opts: ["(L - L_next) / SendToDelay", "L * SendToDelay", "Bandwidth / ETT", "dist / deadline^2"], ans: 0, exp: "RelaySpeed considers distance progress divided by delay: (L - L_next) / SendToDelay." },
-  { q: "What does PEGASIS use to connect all nodes?", opts: ["Star topology", "Single linear greedy chain", "Cluster tree", "Virtual grid"], ans: 1, exp: "PEGASIS organizes all nodes into a linear chain; nodes take turns sending aggregated data to base station." }
+  { q: "What is the primary cause of the Implosion problem in flooding (Heinzelman et al. 1999)?", opts: ["Hardware clock drift in transceiver", "Duplicate copies of the same packet received by a node from multiple neighbors", "Nodes running out of battery", "Packet collisions at the physical layer"], ans: 1, exp: "Implosion occurs when multiple neighbors rebroadcast the exact same packet to a common node (e.g. B and C both forward P1 to D)." },
+  { q: "What is a mandatory requirement for meta-data in the SPIN protocol?", opts: ["Must be encrypted with 256-bit AES", "Size of meta-data x must be strictly less than raw data X (x < X)", "Must contain GPS coordinates", "Must exceed 256 bytes"], ans: 1, exp: "Meta-data negotiation is only beneficial if the meta-data descriptor is significantly smaller than the actual sensor data payload." },
+  { q: "How does SPIN-BC suppress redundant request (REQ) packets in a broadcast channel?", opts: ["By applying CSMA/CD collision detection", "Nodes set a random backoff timer; overhearing an identical REQ cancels the timer and suppresses the REQ", "The base station polls nodes sequentially", "Nodes calculate CRC checksums"], ans: 1, exp: "In SPIN-BC, overhearing another node's broadcast REQ suppresses redundant REQ transmissions, and the advertiser transmits DATA only once." },
+  { q: "How are data and sensing tasks named in Directed Diffusion?", opts: ["32-bit IPv4 addresses", "Attribute-value pairs (e.g., type=vehicle, interval=20ms)", "MAC-layer hardware addresses", "Random hash keys"], ans: 1, exp: "Directed diffusion uses attribute-value pairs to describe sensing tasks and steer data delivery without global node IP addresses." },
+  { q: "In Gradient-Based Routing (GBR), how is the gradient of a wireless link defined?", opts: ["Height_node - Height_neighbor", "Height_node * Height_neighbor", "Residual_Energy / Hop_Count", "ETX * Bandwidth"], ans: 0, exp: "Gradient is defined as the height of the node minus the height of its neighbor, where height is the minimum hop count to the base station." },
+  { q: "Which traffic balancing scheme in GBR defers traffic by artificially increasing a node's height when battery is low?", opts: ["Stochastic scheme", "Energy-based scheme", "Stream-based scheme", "Multipath scheme"], ans: 1, exp: "In GBR's energy-based scheme, a node with low battery artificially raises its height, reducing the incoming gradient and deflecting traffic away." },
+  { q: "What mathematical theorem is used to find the minimal set of nodes whose removal partitions a network?", opts: ["Nyquist-Shannon Theorem", "Max-Flow Min-Cut Theorem", "Bayes' Theorem", "Bellman-Ford Theorem"], ans: 1, exp: "The Max-Flow Min-Cut Theorem is used to identify critical bridge/cut nodes whose depletion partitions the network into disconnected subnetworks." },
+  { q: "In DSDV, what mechanism guarantees loop-free routing?", opts: ["Time-To-Live hop limits", "Destination Sequence Numbers assigned exclusively by the destination node", "Reverse path pointers", "Distance vector poisoning"], ans: 1, exp: "Destination Sequence Numbers ensure nodes can always distinguish between fresh and stale routes, completely eliminating routing loops." },
+  { q: "What is the primary role of Multipoint Relays (MPRs) in OLSR?", opts: ["They act as cluster heads and decode CDMA", "ONLY nodes selected as MPRs are permitted to forward topology control (TC) messages", "They calculate clock synchronization drift", "They replace all sensor batteries"], ans: 1, exp: "In OLSR, only MPRs rebroadcast topology control packets, which eliminates broadcast storms while ensuring full 2-hop coverage." },
+  { q: "Under what condition will an intermediate node in AODV reply to an incoming RREQ with an RREP?", opts: ["If it has at least 50% battery remaining", "If the sequence number of its route to the destination is >= the destination sequence number in RREQ", "If it is an elected cluster head", "If the hop count in RREQ is zero"], ans: 1, exp: "An intermediate node replies only if its route is fresh enough, meaning its cached destination sequence number is greater than or equal to that in the RREQ." },
+  { q: "Which routing protocol embeds the entire sequence of intermediate hops directly into the packet header?", opts: ["AODV", "Dynamic Source Routing (DSR)", "DSDV", "LEACH"], ans: 1, exp: "DSR uses Source Routing where the originating sender writes the complete intermediate path into the packet header." },
+  { q: "In Landmark Routing, what is a Landmark of radius n?", opts: ["A node with n antennas", "A node for which all other nodes within n hops maintain routing information toward it", "A base station located n meters underground", "A node with n battery cells"], ans: 1, exp: "A node i for which all nodes within n hops know a route toward i is defined as a landmark of radius n." },
+  { q: "How does PEGASIS organize sensor nodes for data gathering?", opts: ["In concentric cluster circles", "In a linear chain constructed using a greedy algorithm", "In a quad-tree virtual grid", "In a random gossip mesh"], ans: 1, exp: "PEGASIS organizes all nodes into a single linear chain where nodes transmit only to closest neighbors and take turns relaying to the base station." },
+  { q: "What hybrid routing approach is employed in the Safari Architecture?", opts: ["Flooding inside cells and Gossiping between cells", "Reactive DSR within fundamental cells, and proactive reverse-beacon routing between cells", "AODV within cells and GPSR between cells", "LEACH within cells and PEGASIS between cells"], ans: 1, exp: "Safari uses reactive DSR within fundamental cells (Level 1) and proactive routing following the reverse path of drum beacons for inter-cell communication." },
+  { q: "What is the formula for Expected Transmission Time (ETT) proposed by Draves et al. (2004)?", opts: ["ETT = ETX * (S / B)", "ETT = ETX / (S * B)", "ETT = (d_f * d_r) / S", "ETT = Bandwidth / Packet_Size"], ans: 0, exp: "ETT = ETX * (S / B), where S is the average packet size in bytes and B is the link bandwidth in bytes per second." }
 ];
 
 let quizIndex = 0, quizAnswers = {};
