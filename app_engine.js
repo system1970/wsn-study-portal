@@ -312,88 +312,161 @@ const UNIT4_LECTURES = {
 
 const UNIT3_LECTURES = {
   lec1: {
-    title: "Unit 3 • Lecture 1: Fundamentals of Wireless MAC Protocols",
+    title: "Unit 3 • Lecture 1: Fundamentals of Wireless MAC Protocols (pp. 1–35)",
     sections: [
       {
-        heading: "1. Data Link Layer & MAC Responsibilities",
+        heading: "1. Data Link Layer Architecture & MAC Functionality (Slides 1–8)",
         items: [
-          "Layer 2 in OSI model controls medium access. IEEE 802 splits it into LLC (Logical Link Control) and MAC (Medium Access Control).",
-          "MAC operates directly on physical layer; arbitrates channel access, resolves contention, framing, addressing, and physical error control.",
-          "Contention-Free (FDMA, TDMA, CDMA, Polling, Token Passing, Reservation) vs Contention-Based (ALOHA, CSMA, MACA, MACAW) vs Hybrid."
+          "<strong>OSI Model & IEEE 802 Sublayering:</strong> The Data Link Layer (Layer 2) is divided into the Logical Link Control (LLC) sublayer and the Medium Access Control (MAC) sublayer. The MAC layer operates directly on top of the physical layer, assuming full control over the shared wireless medium.",
+          "<strong>Core Responsibilities of MAC:</strong> Arbitrates when a node accesses the channel, resolves contention, prevents collisions, performs packet framing, physical addressing, and provides link-layer error control.",
+          "<strong>Taxonomy of Wireless MAC:</strong> Most MAC protocols belong to Contention-Free (fixed/dynamic scheduling), Contention-Based (random access), or Hybrid paradigms."
         ]
       },
       {
-        heading: "2. CSMA Variants & Wireless Limitations",
+        heading: "2. Contention-Free vs Contention-Based Paradigms (Slides 9–20)",
         items: [
-          "CSMA/CD cannot work in wireless because transmit power >> receive power and collisions happen at receiver.",
-          "1-Persistent, Non-Persistent, and p-Persistent CSMA.",
-          "CSMA/CA uses DIFS + random backoff. Shorter backoff wins; others freeze timers and resume after transmission + DIFS."
+          "<strong>Contention-Free (Schedule-Based):</strong> Fixed assignments: <em>TDMA</em> (time slots), <em>FDMA</em> (frequency bands), <em>CDMA</em> (orthogonal PN codes). Dynamic assignments: <em>Polling</em>, <em>Token Passing</em> (token rotates, holder transmits), <em>Reservation protocols</em> (minislots reserve data frames).",
+          "<strong>Contention-Based (Random Access):</strong> Nodes access medium simultaneously without pre-assigned slots. <em>Pure ALOHA</em> (transmit anytime, max throughput 18.4%), <em>Slotted ALOHA</em> (transmit only at slot boundaries, max throughput 36.8%).",
+          "<strong>CSMA (Carrier Sense Multiple Access):</strong> Nodes sense channel before transmitting (Listen-Before-Talk).<br>• <em>1-Persistent CSMA:</em> If idle, transmit immediately (p=1). If busy, listen continuously and transmit instantly when idle. Causes collisions if multiple nodes wait.<br>• <em>Non-Persistent CSMA:</em> If idle, transmit. If busy, wait a random backoff time before sensing again. Reduces collisions; increases idle delay.<br>• <em>p-Persistent CSMA (Slotted):</em> If idle, transmit with probability p; defer to next slot with probability 1-p.",
+          "<strong>Why CSMA/CD Fails in Wireless:</strong> Collision Detection (CD) cannot work because transmitter power dwarfs receiver power (P_tx >> P_rx) and collisions occur at the receiver, not at the transmitter!"
         ]
       },
       {
-        heading: "3. Hidden & Exposed Terminal Problems",
+        heading: "3. CSMA/CA, MACA & MACAW Protocols (Slides 21–27)",
         items: [
-          "Hidden Terminal: Out-of-range senders collide at common receiver. Solved via RTS/CTS handshakes (MACA/MACAW).",
-          "Exposed Terminal: Node unnecessarily delays transmission to an inactive node due to carrier sensing an adjacent sender."
+          "<strong>CSMA/CA (Collision Avoidance):</strong> Uses Interframe Spaces (DIFS, SIFS) and slotted random backoff. Example (Slide 24): Node A waits for DIFS + 4*s; Node B waits for DIFS + 7*s. Node A's timer expires first and begins transmitting; Node B freezes its backoff timer and resumes after Node A finishes plus another DIFS!",
+          "<strong>MACA (Multiple Access with Collision Avoidance) (Phil Karn 1990):</strong> Eliminates carrier sensing; uses <code>RTS</code> (Request-to-Send) and <code>CTS</code> (Clear-to-Send) handshakes with duration fields to quiet neighboring nodes and prevent hidden terminal collisions.",
+          "<strong>MACAW (Bharghavan et al. 1994):</strong> Extends MACA for Wireless LANs by adding: (1) <code>ACK</code> control frame for link-layer reliability, (2) <code>DS</code> (Data Sending) frame sent after CTS to confirm channel acquisition, and (3) <code>RRTS</code> (Request-to-RTS) for contention coordination."
+        ]
+      },
+      {
+        heading: "4. IEEE 802.11, IEEE 802.15.4 & Channel Impairments (Slides 28–35)",
+        items: [
+          "<strong>IEEE 802.11:</strong> DCF (Distributed Coordination Function using CSMA/CA) vs PCF (Point Coordination Function using centralized polling). SIFS for ACK; DIFS for frame contention.",
+          "<strong>IEEE 802.15.4 / ZigBee:</strong> Low-rate WPAN standard. 250 kbps at 2.45 GHz worldwide ISM band. Topologies: Star (all nodes communicate with PAN coordinator) vs Peer-to-Peer (mesh).",
+          "<strong>Hidden Terminal Problem (Slide 34):</strong> Node A and Node C cannot hear each other, but both communicate with Node B. Both sense medium idle and transmit simultaneously, colliding at B. Solved via RTS/CTS!",
+          "<strong>Exposed Terminal Problem (Slide 35):</strong> Node B transmits to Node A. Node C wishes to transmit to Node D (outside B's range). C senses B's transmission and needlessly defers, wasting spatial channel reuse.",
+          "<strong>Five Sources of Energy Waste in WSN MAC:</strong><br>1. <em>Collision:</em> Corrupted packets require retransmissions.<br>2. <em>Overhearing:</em> Nodes receive and decode packets destined for other nodes.<br>3. <em>Control Packet Overhead:</em> Transmitting RTS, CTS, ACK, and SYNC packets consumes energy without payload.<br>4. <em>Idle Listening:</em> Listening to an idle channel waiting for traffic (consumes 50–100% of receive power!).<br>5. <em>Overemitting:</em> Transmitting when the destination node is asleep or unready."
         ]
       }
     ]
   },
   lec2: {
-    title: "Unit 3 • Lecture 2: WSN MAC Characteristics & Contention-Free Protocols",
+    title: "Unit 3 • Lecture 2: Characteristics of MAC Protocols in WSNs (pp. 36–52)",
     sections: [
       {
-        heading: "1. Characteristics & DPM",
+        heading: "1. Core Characteristics & Design Goals in WSN MAC (Slides 36–50)",
         items: [
-          "Energy efficiency is top priority. Dynamic Power Management (DPM): Active, Idle, Sleep.",
-          "Receive and Idle draw almost identical current; Sleep mode draws microamps.",
-          "Duty Cycle = Active Time / Total Period. Radios: RFM TR1000 (12 mA Tx, 3.8 mA Rx, 0.7 µA sleep), MC13202 (Hibernate & Sleep), CC1000, CC2420."
+          "<strong>Energy Efficiency:</strong> The dominant requirement in WSNs because battery replacement is infeasible. MAC protocols must minimize idle listening, collisions, and overhearing.",
+          "<strong>Scalability:</strong> Must accommodate high node densities without excessive routing tables or CDMA code storage limits (Slide 45).",
+          "<strong>Adaptability:</strong> Self-management and autonomous reconfiguration under node failure, mobility, and topology changes.",
+          "<strong>Latency & Predictability:</strong> Real-time event detection requires bounded delivery latency. Contention-free TDMA imposes strict upper delay bounds; contention-based CSMA can offer lower delay under light load.",
+          "<strong>Reliability:</strong> High packet delivery ratio (PDR) for critical physical sensor measurements."
         ]
       },
       {
-        heading: "2. Contention-Free Protocols",
+        heading: "2. Transceiver Energy Consumption & Duty Cycling (Slides 41–43)",
         items: [
-          "TRAMA: Traffic-adaptive TDMA. NP (2-hop map), SEP (bitmap), AEA hash prio(i,t)=hash(i⊕t). Slots only given to active senders; others sleep.",
-          "Y-MAC: Multi-channel TDMA. Receiver-driven unicast slots; channel hopping on bursts.",
-          "DESYNC-TDMA: Ring oscillators jump to midpoint of neighbor firings: φ_mid = φ_i + ½(Δ_{i+1} - Δ_i) mod 1. No global clock!",
-          "LEACH: Cluster head rotation via P_i(t) formula. Intra-cluster TDMA, inter-cluster CDMA/DSSS.",
-          "LMAC & MLMAC: Distributed TDMA slots (Control header + Data). MLMAC adds mobility support."
-        ]
+          "<strong>Mote Radio Profiles (Slide 41):</strong> Mica and Mica2 motes use Atmel ATmega 128L CPU and RFM TR1000/TR3000, Chipcon CC1000, or CC2420 transceivers.<br>• Transmit: ~12–25 mA<br>• Receive: ~8–15 mA<br>• Idle Listening: ~7–12 mA (almost identical to Receive!)<br>• Sleep / Standby: ~0.7–5 µA (thousands of times lower!)",
+          "<strong>Duty Cycling Axiom:</strong> Since idle listening consumes virtually the same current as active reception, sensor radios must be powered down into Sleep mode whenever possible.",
+          "<strong>Duty Cycle Formula:</strong> <code>Duty Cycle = (T_active / T_period) * 100%</code>. Typical WSN duty cycles range from 1% to 10% to achieve multi-year lifespans."
+        ],
+        formula: "Duty Cycle = (T_active / T_period) * 100%"
       }
     ]
   },
   lec3: {
-    title: "Unit 3 • Lecture 3: Contention-Based MAC Protocols (Part 1)",
+    title: "Unit 3 • Lecture 3: Contention-Free MAC Protocols (pp. 53–94)",
     sections: [
       {
-        heading: "1. PAMAS, S-MAC, T-MAC, PMAC",
+        heading: "1. TRAMA (Traffic-Adaptive Medium Access) (Slides 54–63)",
         items: [
-          "PAMAS: Dual physical channels (Data + Control) to eliminate overhearing. Probe frames on wakeup.",
-          "S-MAC: Synchronized Listen/Sleep duty cycling via SYNC frames. Overhearing sleep via RTS/CTS. Message passing fragmentation.",
-          "T-MAC: Variable active period ending after idle timeout TA. Early Sleeping solved by FRTS and dummy DS packets.",
-          "PMAC: Tentative sleep bit patterns 0^m 1. Doubles sleep exponentially under light traffic. PETF and PRTF frames."
+          "<strong>Protocol Overview (Rajendran et al. 2003):</strong> TDMA-based collision-free MAC protocol. Time is partitioned into <em>Random-Access Signaling Slots</em> and <em>Scheduled-Access Data Slots</em>.",
+          "<strong>Three Protocol Components (Slide 56):</strong><br>• 1. <em>Neighbor Protocol (NP):</em> Gathers 1-hop and 2-hop neighbor tables via signaling slots during random-access intervals.<br>• 2. <em>Schedule Exchange Protocol (SEP):</em> Nodes announce slot requirements and intended receivers as bitmaps during scheduled-access slots (Slide 61: SCHEDULE_INTERVAL = 100 slots).<br>• 3. <em>Adaptive Election Algorithm (AEA):</em> Dynamically elects slot owners using a pseudo-random hash priority: <code>prio(i, t) = hash(i ⊕ t)</code>. The node with the highest priority in its 2-hop neighborhood wins the slot. If a winning node has no data, it gives up the slot and sleeps!"
+        ],
+        formula: "prio(i, t) = hash(i ⊕ t)"
+      },
+      {
+        heading: "2. Y-MAC Protocol (Slides 64–69)",
+        items: [
+          "<strong>Multi-Channel TDMA (Kim et al. 2008):</strong> Designed for heavy, bursty sensor traffic. Combines TDMA with dynamic multi-channel hopping across 4 orthogonal channels (Slide 68, Fig 1).",
+          "<strong>Operation:</strong> Unicast period: each slot is assigned to one receiver node. If the medium is free, the sender transmits a preamble. When traffic bursts exceed single-channel capacity, nodes hop to alternative channels to transmit concurrent streams."
         ]
+      },
+      {
+        heading: "3. DESYNC-TDMA (Degesys et al. 2007, Slides 70–79)",
+        items: [
+          "<strong>Bio-Inspired Desynchronization:</strong> Based on pulse-coupled oscillators. Instead of synchronizing nodes to fire together, nodes deliberately <em>desynchronize</em> to fire at equal intervals along a circular period T.",
+          "<strong>Midpoint Algorithm (Slide 75–76):</strong> Node i records the firing times of its preceding neighbor Δ_i and succeeding neighbor Δ_{i+1}. Node i jumps to the midpoint:<br><code>φ_mid(t) = φ_i(t) + ½ * [Δ_{i+1}(t) - Δ_i(t)] (mod 1)</code>.",
+          "<strong>Convergence:</strong> Over successive cycles, n nodes automatically self-distribute around the ring with spacing T/n, achieving collision-free TDMA slots without central master clocks!"
+        ],
+        formula: "φ_mid(t) = φ_i(t) + ½ * [Δ_{i+1}(t) - Δ_i(t)] (mod 1)"
+      },
+      {
+        heading: "4. LEACH & LMAC Protocols (Slides 80–93)",
+        items: [
+          "<strong>LEACH (Heinzelman et al. 2000, Slides 80–89):</strong> Clustered MAC/routing architecture.<br>• <em>Setup Phase:</em> Nodes self-elect as Cluster Heads (CH) with probability <code>P_i(t) = k / [N - k * (r mod (N/k))]</code> if C_i(t)=1. CH broadcasts ADV; nodes join via Join-REQ; CH creates TDMA schedule.<br>• <em>Steady-State Phase:</em> Intra-cluster communication uses <strong>TDMA</strong> (members sleep during other slots). Inter-cluster communication uses orthogonal <strong>CDMA / DSSS</strong> spreading codes to prevent inter-cluster interference (Slide 86).<br>• <em>LEACH-C:</em> Centralized base station optimization using simulated annealing.",
+          "<strong>LMAC (Lightweight MAC) (van Hoesel & Havinga 2004, Slides 90–93):</strong> Energy-efficient TDMA protocol. Each slot has a designated controller node. Slot = Control Message (controller ID, distance, receiver, data length, occupancy bitmap 0/1) + Data. Mobile LMAC dynamically reallocates slots when nodes move."
+        ],
+        formula: "P_i(t) = k / [N - k * (r mod (N/k))]  |  Intra-cluster: TDMA  |  Inter-cluster: CDMA"
       }
     ]
   },
   lec4: {
-    title: "Unit 3 • Lectures 4 & 5: Advanced MAC & Hybrid Protocols",
+    title: "Unit 3 • Lecture 4: Contention-Based MAC Protocols (pp. 95–155)",
     sections: [
       {
-        heading: "1. RMAC, DW-MAC, DMAC, WiseMAC, RI-MAC",
+        heading: "1. PAMAS & S-MAC Protocols (Slides 99–115)",
         items: [
-          "RMAC: Pioneer (PION) frame reserves multi-hop path in DATA period; data crosses multiple hops in single SLEEP period.",
-          "DW-MAC: Proportional 1:1 mapping T_i^S = T_i^D * (T_sleep / T_data) prevents SLEEP collisions.",
-          "DMAC: Staggered chain reaction in convergecast trees. Depth d packet arrives in d intervals.",
-          "WiseMAC: Adaptive preamble sampling; base station learns receiver offsets to shorten Tp.",
-          "RI-MAC: Receiver-initiated beacons invite data and acknowledge previous frames."
+          "<strong>PAMAS (Singh & Raghavendra 1998, Slides 99–104):</strong> Dual-channel architecture: <em>Data Channel</em> + separate <em>Signaling Channel</em>. Nodes power off their data transceiver if: (1) a neighbor is transmitting and node has no data, or (2) a neighbor is receiving and node has no data for it. Solves overhearing and collision waste.",
+          "<strong>S-MAC (Sensor-MAC) (Ye et al. 2002, Slides 105–115):</strong><br>• <em>Periodic Listen/Sleep:</em> Fixed frame (e.g. 100 ms listen, 900 ms sleep = 10% duty cycle).<br>• <em>Virtual Clustering:</em> Nodes exchange <code>SYNC</code> packets. Nodes with identical schedules synchronize as Followers/Synchronizers. Border nodes bridge clusters by maintaining multiple schedules.<br>• <em>Overhearing Avoidance:</em> Hearing an RTS/CTS destined for another node puts the radio into sleep mode immediately (sets NAV).<br>• <em>Message Passing:</em> Long sensor messages fragmented into small bursts; single RTS/CTS reserves medium for entire train of fragments."
         ]
       },
       {
-        heading: "2. Hybrid Protocols (Z-MAC & MH-MAC)",
+        heading: "2. T-MAC & The Early Sleeping Problem (Slides 116–121)",
         items: [
-          "Z-MAC: DRAND 2-hop slots. Local frame TF=2^a. Owner backoff [0,To], non-owner [To,Tno]. ECN triggers HCL mode (pure TDMA).",
-          "MH-MAC: Static nodes use TDMA slots; mobile nodes use 2-phase CSMA. RSSI Hello estimation tunes static/mobile slot ratio."
+          "<strong>T-MAC (van Dam & Langendoen 2003, Slide 116):</strong> Uses an adaptive active period. A node stays awake for a timeout TA; if no event occurs within TA, it goes to sleep immediately! <code>TA > 1.5 * (Contention_Interval + RTS_duration + Turnaround_time)</code>.",
+          "<strong>The Early Sleeping Problem (Slide 117, Fig 3):</strong> In a multi-hop flow A → B → C → D, node C cannot hear A's RTS to B. While B receives from A, node C hears no traffic during TA and sleeps early! When B finishes receiving and tries to forward to C, node C is asleep!",
+          "<strong>Solutions (Slide 120):</strong><br>1. <em>Future-Request-To-Send (FRTS):</em> Node C overhears B's CTS and immediately transmits FRTS to node D, forcing D to stay awake! (Node A sends a dummy <em>Data-Send (DS)</em> packet to prevent collision with FRTS).<br>2. <em>Full Buffer Priority:</em> Nodes with full buffers get transmission priority."
+        ],
+        formula: "TA > 1.5 * (Contention_Interval + RTS_duration + Turnaround_time)"
+      },
+      {
+        heading: "3. PMAC, RMAC & DMAC Protocols (Slides 122–143)",
+        items: [
+          "<strong>PMAC (Zheng et al. 2005, Slides 122–128):</strong> Sleep-wakeup patterns of format <code>0^m 1</code> (m indicates traffic load: small m = heavy traffic, large m = light traffic). Nodes double sleep interval exponentially when traffic is absent.",
+          "<strong>RMAC (Du et al. 2007, Slides 129–136):</strong> Eliminates multi-hop sleep delays. Cycle = SYNC + DATA + SLEEP. Sender transmits a <strong>Pioneer Control Frame (PION)</strong> during DATA period across multi-hop path. During SLEEP period, raw data flows continuously across all relays: <code>T_wakeup(i) = (i - 1) * [size(DATA) + size(ACK) + 2*SIFS]</code>.",
+          "<strong>DMAC (Lu et al. 2004, Slides 139–143):</strong> Convergecast tree MAC (Fig 1, Slide 140). Staggered wakeup schedule: depth d receives when d+1 transmits, then transmits to d-1. Packet from depth d reaches sink in d intervals with zero queuing delay!"
+        ],
+        formula: "RMAC: T_wakeup(i) = (i - 1) * [size(DATA) + size(ACK) + 2*SIFS]"
+      },
+      {
+        heading: "4. WiseMAC & Receiver-Initiated MAC (Slides 144–154)",
+        items: [
+          "<strong>WiseMAC (El-Hoiydi & Decotignie 2004, Slides 144–148):</strong> Asynchronous Preamble Sampling (LPL). Sender learns receiver's sampling schedule and transmits an ultra-short minimized preamble just before the receiver wakes up, drastically reducing transmit energy.",
+          "<strong>Receiver-Initiated MAC (RI-MAC) (Slides 149–154):</strong> Transmission is initiated by the receiver! Receiver wakes up and broadcasts a Beacon inviting data. Senders wake up, wait for beacon, and transmit immediately."
+        ]
+      }
+    ]
+  },
+  lec5: {
+    title: "Unit 3 • Lecture 5: Hybrid MAC Protocols (pp. 156–174)",
+    sections: [
+      {
+        heading: "1. Zebra-MAC (Z-MAC) Architecture (Slides 158–166)",
+        items: [
+          "<strong>Hybrid Motivation (Rhee et al. 2005):</strong> Combines CSMA's low delay under light load with TDMA's collision-free bounded throughput under heavy load.",
+          "<strong>Setup Phase:</strong> Base station runs <strong>DRAND</strong> to assign time slots. Local frame sizes: <code>F_i = 2^a</code> where <code>2^(a-1) ≤ F_i < 2^a - 1</code> (Slide 161–163, Fig 1).",
+          "<strong>Slot Ownership:</strong> Every slot has an <em>owner</em>. Owner transmits with high priority (shorter backoff [0, T_o]). Non-owners contend for unused slots using CSMA/CA (longer backoff [T_o, T_no]).",
+          "<strong>LCL vs HCL Modes (Slide 165):</strong> Low Contention Level (LCL) uses prioritized CSMA. When contention rises, nodes broadcast Explicit Contention Notification (ECN) and enter <strong>High Contention Level (HCL)</strong> mode: ONLY slot owners and their 1-hop neighbors can transmit (pure TDMA)!"
+        ],
+        formula: "Frame Size: F_i = 2^a  |  Owner Backoff: [0, T_o]  |  Non-Owner Backoff: [T_o, T_no]"
+      },
+      {
+        heading: "2. Mobility-Adaptive Hybrid MAC (MH-MAC) (Slides 167–173)",
+        items: [
+          "<strong>Mobile Sensor Support:</strong> Designed for networks with mobile and static nodes. Frame partitioned into <em>Static Slots</em> (LMAC-based TDMA for stationary nodes) and <em>Mobile Slots</em> (CSMA contention with wakeup tones for moving nodes).",
+          "<strong>Mobility Estimation (Slide 169):</strong> Nodes track signal strength fluctuations across periodic HELLO messages to detect mobility. Dynamically adjusts the ratio between static and mobile slots based on the network mobility ratio."
         ]
       }
     ]
@@ -819,6 +892,24 @@ function updateMmspeedCalc() {
 // -------------------------------------------------------------------------
 // FLASHCARDS CONTROLLER
 // -------------------------------------------------------------------------
+const UNIT3_FLASHCARDS = [
+  { cat: "Fundamentals", q: "Why CSMA/CD fails in Wireless Networks", a: "1. Transmit power >> Receive power (transceiver drowns out collisions)\n2. Collisions occur at the receiver, not at the transmitter." },
+  { cat: "Fundamentals", q: "Five Sources of Energy Waste in WSN MAC", a: "1. Collision\n2. Overhearing\n3. Control Packet Overhead\n4. Idle Listening (consumes 50-100% of Rx power)\n5. Overemitting" },
+  { cat: "Fundamentals", q: "Hidden vs Exposed Terminal Problems", a: "Hidden Terminal: out-of-range senders collide at common receiver (solved by RTS/CTS).\nExposed Terminal: node needlessly defers transmission due to sensing adjacent sender." },
+  { cat: "Contention-Free", q: "TRAMA Three Protocol Components", a: "1. Neighbor Protocol (NP): 2-hop neighbor discovery\n2. Schedule Exchange Protocol (SEP): traffic bitmaps\n3. Adaptive Election Algorithm (AEA): hash prio(i ⊕ t)" },
+  { cat: "Contention-Free", q: "DESYNC-TDMA Midpoint Equation", a: "φ_mid(t) = φ_i(t) + ½ * [Δ_{i+1}(t) - Δ_i(t)] (mod 1). Nodes jump to midpoint of neighbor firings, self-forming TDMA slots." },
+  { cat: "Contention-Free", q: "LEACH Intra-Cluster vs Inter-Cluster MAC", a: "Intra-Cluster: TDMA (members sleep during other slots)\nInter-Cluster: Orthogonal CDMA / DSSS codes to prevent interference." },
+  { cat: "Contention-Free", q: "LMAC Slot Structure", a: "Control Message (controller ID, hop count, destination, occupancy bitmap 0/1) + Data Payload." },
+  { cat: "Contention-Based", q: "PAMAS Power-Off Conditions", a: "1. Neighbor transmits and node has no data.\n2. Neighbor receives and node has no data for it. Uses separate Signaling Channel." },
+  { cat: "Contention-Based", q: "S-MAC Virtual Clustering & Message Passing", a: "Nodes exchange SYNC to synchronize Listen/Sleep. Message Passing fragments long packets under single RTS/CTS." },
+  { cat: "Contention-Based", q: "T-MAC Early Sleeping Problem & FRTS", a: "Downstream node sleeps during TA. Solved by Future-Request-to-Send (FRTS) and dummy Data-Send (DS) packets." },
+  { cat: "Contention-Based", q: "RMAC Pioneer Frame (PION) Multi-Hop Routing", a: "PION reserves multi-hop path in DATA period; raw data flows across multiple relays in single SLEEP period." },
+  { cat: "Contention-Based", q: "DMAC Staggered Schedule", a: "Convergecast tree: depth d receives from d+1, then transmits to d-1. Delivers packet to sink in d intervals." },
+  { cat: "Contention-Based", q: "WiseMAC Adaptive Preamble Sampling", a: "Transmitter learns receiver wakeup schedule; transmits ultra-short minimized preamble just before receiver wakes." },
+  { cat: "Hybrid", q: "Z-MAC DRAND & HCL Mode", a: "DRAND assigns slots. Owners get priority [0, To]. Under heavy contention (ECN), switches to HCL mode (pure TDMA)." },
+  { cat: "Hybrid", q: "MH-MAC Static vs Mobile Slots", a: "Static slots use LMAC TDMA; Mobile slots use CSMA with wakeup tones. Mobility estimated via HELLO signal strength." }
+];
+
 const UNIT4_FLASHCARDS = [
   { cat: "Energy Metrics", q: "Singh et al. (1998) 5 Energy Routing Metrics", a: `1. Minimum energy consumed per packet
 2. Maximum time to network partition (Max-Flow Min-Cut)
@@ -921,6 +1012,24 @@ function toggleMasterFlashcard() {
 // -------------------------------------------------------------------------
 // UNIVERSITY Q&A BANK CONTROLLER
 // -------------------------------------------------------------------------
+const QA_2MARKS = [
+  { q: "What is the primary function of the MAC sublayer in WSNs?", a: "The MAC sublayer operates directly above the Physical Layer to arbitrate access to the shared wireless medium, resolve contention, prevent packet collisions, and control transceiver duty cycling to save energy." },
+  { q: "Why is CSMA/CD ineffective in wireless sensor networks?", a: "CSMA/CD cannot work in wireless because: (1) Transmit power is orders of magnitude greater than receive power (P_tx >> P_rx), swamping collision detection; and (2) Collisions occur at the receiver, not at the transmitter." },
+  { q: "Explain the Hidden Terminal Problem and how it is resolved.", a: "Two nodes out of each other's radio range transmit simultaneously to a common intermediate node, causing packet collision. It is resolved using RTS/CTS handshakes which broadcast transmission duration to silence neighbors." },
+  { q: "What is the Exposed Terminal Problem?", a: "A node unnecessarily defers its transmission to an idle destination because it senses the carrier of an adjacent node transmitting in the opposite direction, wasting spatial channel reuse." },
+  { q: "List the five primary sources of energy waste in WSN MAC protocols.", a: "1. Collision (wasted retransmissions)\n2. Overhearing (receiving frames for other nodes)\n3. Control packet overhead (RTS/CTS/ACK headers)\n4. Idle listening (listening to an empty channel)\n5. Overemitting (transmitting when receiver is unready)." },
+  { q: "Define Duty Cycle and state its formula.", a: "Duty cycle is the percentage of time a sensor transceiver spends in the active state versus total cycle duration: Duty Cycle = (T_active / T_period) * 100%." },
+  { q: "How does TRAMA determine slot ownership?", a: "TRAMA uses the Adaptive Election Algorithm (AEA) with a pseudo-random hash priority: prio(i, t) = hash(i ⊕ t). The node with highest priority among its 2-hop neighborhood wins the slot." },
+  { q: "State the midpoint algorithm formula in DESYNC-TDMA.", a: "φ_mid(t) = φ_i(t) + ½ * [Δ_{i+1}(t) - Δ_i(t)] (mod 1), where Δ_{i+1} and Δ_i are firing time offsets of succeeding and preceding ring neighbors." },
+  { q: "State the Cluster Head election probability formula in LEACH.", a: "P_i(t) = k / [N - k * (r mod (N/k))] if C_i(t) = 1, where k is desired CH count, N is total nodes, r is round number, and C_i(t) indicates if node was recently a CH." },
+  { q: "What is the Early Sleeping Problem in T-MAC?", a: "A downstream node hearing no traffic during its idle timeout TA goes to sleep early while an upstream node is receiving data, causing forwarding failure when the upstream node tries to send." },
+  { q: "How does Future-Request-to-Send (FRTS) solve early sleeping?", a: "An intermediate node overhearing a CTS immediately transmits an FRTS packet to its downstream neighbor, forcing it to remain awake for the subsequent transmission." },
+  { q: "What is the function of the Pioneer Control Frame (PION) in RMAC?", a: "A PION frame is transmitted during the DATA period to reserve a multi-hop sleep schedule across all relays, allowing raw data to cross multiple hops in a single SLEEP period." },
+  { q: "How does DMAC achieve low latency in convergecast data gathering?", a: "DMAC uses a staggered wakeup schedule: nodes at tree depth d wake up to receive when depth d+1 transmits, then immediately transmit to depth d-1, delivering packets to sink in d intervals." },
+  { q: "How does WiseMAC minimize preamble transmission overhead?", a: "WiseMAC transmitters learn receiver sampling schedules and transmit an ultra-short minimized preamble just before the receiver wakes up, drastically reducing transmit energy." },
+  { q: "Differentiate between LCL and HCL modes in Z-MAC.", a: "In Low Contention Level (LCL), all nodes compete for slots using CSMA with prioritized backoffs. In High Contention Level (HCL), triggered by ECN, ONLY slot owners can transmit (pure TDMA)." }
+];
+
 const UNIT4_QA_2MARKS = [
   { q: "Define Routing in Wireless Sensor Networks.", a: "Routing is the network-layer process of discovering, establishing, and maintaining paths from a source sensor node to a destination sink (gateway) across one or more intermediate forwarding relay nodes." },
   { q: "Distinguish between Deterministic and Randomized deployment in WSNs.", a: "Deterministic deployment places nodes at predetermined coordinates, enabling static routing tables. Randomized deployment scatters nodes unpredictably (e.g. airdrop), requiring autonomous self-organization for neighbor discovery and path establishment." },
@@ -1042,6 +1151,19 @@ function setQaTab(tab) {
 // -------------------------------------------------------------------------
 // MOCK EXAM QUIZ CONTROLLER
 // -------------------------------------------------------------------------
+const QUIZ = [
+  { q: "In the IEEE 802 model, which sublayer operates directly above the Physical Layer?", opts: ["LLC", "MAC", "Network Layer", "Transport Layer"], ans: 1, exp: "The MAC sublayer operates directly above the Physical Layer, assuming full control over the wireless medium." },
+  { q: "Why is CSMA/CD ineffective in wireless sensor networks?", opts: ["Memory buffer overflow", "Tx power >> Rx power and collisions occur at receiver", "RF carrier cannot carry control frames", "CD requires global clock"], ans: 1, exp: "Wireless transmitters swamp incoming signals (Tx >> Rx) and collisions happen at receiver." },
+  { q: "Which protocol introduced the Data Sending (DS) control frame?", opts: ["MACA", "MACAW", "S-MAC", "LEACH"], ans: 1, exp: "MACAW introduced DS after CTS to confirm channel acquisition." },
+  { q: "What data rate does IEEE 802.15.4 achieve at 2.45 GHz?", opts: ["20 kbps", "40 kbps", "115.2 kbps", "250 kbps"], ans: 3, exp: "IEEE 802.15.4 supports 250 kbps in the worldwide 2.45 GHz ISM band." },
+  { q: "How does TRAMA calculate priority of node i at slot t?", opts: ["i * t", "hash(i ⊕ t)", "E_residual / t", "2^a - 1"], ans: 1, exp: "TRAMA uses pseudo-random hash prio(i, t) = hash(i ⊕ t)." },
+  { q: "What is the primary function of DESYNC-TDMA?", opts: ["Synchronize clocks with GPS", "Desynchronize node firing times to self-form TDMA slots", "Transmit CDMA codes", "Encrypt packets with AES"], ans: 1, exp: "DESYNC uses oscillator phase offsets to jump to neighbor midpoints, self-forming collision-free TDMA slots." },
+  { q: "In LEACH, what MAC scheme is used for inter-cluster communication?", opts: ["TDMA", "CDMA / DSSS", "Slotted ALOHA", "Token Passing"], ans: 1, exp: "LEACH uses TDMA intra-cluster and orthogonal CDMA / DSSS codes inter-cluster to eliminate co-channel interference." },
+  { q: "What causes the Early Sleeping Problem in T-MAC?", opts: ["Battery depletion", "A node overhearing no traffic during timeout TA goes to sleep early", "Clock drift between motes", "CRC checksum failure"], ans: 1, exp: "If a node hears no activation during idle timeout TA, it sleeps early, preventing downstream relays from forwarding." },
+  { q: "What frame is used in RMAC to pre-schedule multi-hop sleep paths?", opts: ["RTS frame", "Pioneer Control Frame (PION)", "HELLO frame", "SYNC frame"], ans: 1, exp: "RMAC sends a PION frame during the DATA period to reserve sleep wakeups across multiple relays." },
+  { q: "In Z-MAC, what triggers nodes to switch to High Contention Level (HCL) mode?", opts: ["Low battery alarm", "Explicit Contention Notification (ECN)", "Beacon timeout", "Channel hopping error"], ans: 1, exp: "ECN broadcasts alert nodes to switch to HCL mode where only slot owners and 1-hop neighbors can transmit (pure TDMA)." }
+];
+
 const UNIT4_QUIZ = [
   { q: "What is the primary cause of the Implosion problem in flooding (Heinzelman et al. 1999)?", opts: ["Hardware clock drift in transceiver", "Duplicate copies of the same packet received by a node from multiple neighbors", "Nodes running out of battery", "Packet collisions at the physical layer"], ans: 1, exp: "Implosion occurs when multiple neighbors rebroadcast the exact same packet to a common node (e.g. B and C both forward P1 to D)." },
   { q: "What is a mandatory requirement for meta-data in the SPIN protocol?", opts: ["Must be encrypted with 256-bit AES", "Size of meta-data x must be strictly less than raw data X (x < X)", "Must contain GPS coordinates", "Must exceed 256 bytes"], ans: 1, exp: "Meta-data negotiation is only beneficial if the meta-data descriptor is significantly smaller than the actual sensor data payload." },
